@@ -1,7 +1,8 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, TYPOGRAPHY } from '../constants/theme';
+import { COLORS, TYPOGRAPHY, SHADOWS } from '../constants/theme';
 import { TabParamList } from '../types';
 
 // Screens
@@ -10,9 +11,20 @@ import SpiritScreen from '../screens/Spirit/SpiritScreen';
 import BodyScreen from '../screens/Body/BodyScreen';
 import MindScreen from '../screens/Mind/MindScreen';
 import WealthScreen from '../screens/Wealth/WealthScreen';
-import AnalyticsScreen from '../screens/Analytics/AnalyticsScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
+
+const CustomTabBarButton = ({ children, onPress }: any) => (
+    <TouchableOpacity
+        style={styles.customButtonContainer}
+        onPress={onPress}
+        activeOpacity={0.8}
+    >
+        <View style={styles.customButton}>
+            {children}
+        </View>
+    </TouchableOpacity>
+);
 
 export default function TabNavigator() {
     return (
@@ -20,12 +32,18 @@ export default function TabNavigator() {
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: {
+                    position: 'absolute',
+                    bottom: 25,
+                    left: 20,
+                    right: 20,
                     backgroundColor: COLORS.surface,
                     borderTopWidth: 0,
-                    elevation: 0,
                     height: 70,
-                    paddingBottom: 10,
+                    borderRadius: 35,
+                    paddingBottom: Platform.OS === 'ios' ? 20 : 10,
                     paddingTop: 10,
+                    ...SHADOWS.large,
+                    elevation: 8, // For Android
                 },
                 tabBarActiveTintColor: COLORS.primary,
                 tabBarInactiveTintColor: COLORS.textMuted,
@@ -35,15 +53,6 @@ export default function TabNavigator() {
                 },
             }}
         >
-            <Tab.Screen
-                name="Dashboard"
-                component={DashboardScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="home" size={size} color={color} />
-                    ),
-                }}
-            />
             <Tab.Screen
                 name="Spirit"
                 component={SpiritScreen}
@@ -59,6 +68,21 @@ export default function TabNavigator() {
                 options={{
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="fitness" size={size} color={color} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Dashboard"
+                component={DashboardScreen}
+                options={{
+                    tabBarLabel: () => null,
+                    tabBarIcon: ({ color }) => (
+                        <View style={{ marginTop: Platform.OS === 'ios' ? 0 : 0 }}>
+                            <Ionicons name="home" size={32} color="white" />
+                        </View>
+                    ),
+                    tabBarButton: (props) => (
+                        <CustomTabBarButton {...props} />
                     ),
                 }}
             />
@@ -80,15 +104,25 @@ export default function TabNavigator() {
                     ),
                 }}
             />
-            <Tab.Screen
-                name="Analytics"
-                component={AnalyticsScreen}
-                options={{
-                    tabBarIcon: ({ color, size }) => (
-                        <Ionicons name="stats-chart" size={size} color={color} />
-                    ),
-                }}
-            />
         </Tab.Navigator>
     );
 }
+
+const styles = StyleSheet.create({
+    customButtonContainer: {
+        top: -30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        ...SHADOWS.large,
+    },
+    customButton: {
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: COLORS.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 4,
+        borderColor: COLORS.surface,
+    },
+});

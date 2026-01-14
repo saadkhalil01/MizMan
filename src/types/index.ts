@@ -72,5 +72,4 @@ export type TabParamList = {
     Body: undefined;
     Mind: undefined;
     Wealth: undefined;
-    Analytics: undefined;
 };
