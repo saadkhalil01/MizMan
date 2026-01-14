@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, TYPOGRAPHY, SHADOWS } from '../constants/theme';
 import { TabParamList } from '../types';
 
@@ -14,17 +15,46 @@ import WealthScreen from '../screens/Wealth/WealthScreen';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-const CustomTabBarButton = ({ children, onPress }: any) => (
-    <TouchableOpacity
-        style={styles.customButtonContainer}
-        onPress={onPress}
-        activeOpacity={0.8}
-    >
-        <View style={styles.customButton}>
-            {children}
-        </View>
-    </TouchableOpacity>
-);
+const CustomTabBarButton = ({ children, onPress }: any) => {
+    const scaleAnim = useRef(new Animated.Value(1)).current;
+
+    const handlePressIn = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 0.9,
+            useNativeDriver: true,
+        }).start();
+    };
+
+    const handlePressOut = () => {
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            friction: 3,
+            tension: 40,
+            useNativeDriver: true,
+        }).start();
+    };
+
+    return (
+        <TouchableOpacity
+            style={styles.customButtonContainer}
+            onPress={onPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            activeOpacity={0.9}
+        >
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <LinearGradient
+                    colors={COLORS.accentGradient}
+                    style={styles.customButton}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                >
+                    {children}
+                </LinearGradient>
+            </Animated.View>
+        </TouchableOpacity>
+    );
+};
 
 export default function TabNavigator() {
     return (
@@ -36,20 +66,21 @@ export default function TabNavigator() {
                     bottom: 25,
                     left: 20,
                     right: 20,
-                    backgroundColor: COLORS.surface,
+                    backgroundColor: 'rgba(26, 32, 56, 0.95)', // Lighter translucent surface
                     borderTopWidth: 0,
                     height: 70,
                     borderRadius: 35,
                     paddingBottom: Platform.OS === 'ios' ? 20 : 10,
                     paddingTop: 10,
+                    borderWidth: 1,
+                    borderColor: 'rgba(255, 255, 255, 0.15)',
                     ...SHADOWS.large,
-                    elevation: 8, // For Android
+                    elevation: 8,
                 },
                 tabBarActiveTintColor: COLORS.primary,
                 tabBarInactiveTintColor: COLORS.textMuted,
                 tabBarLabelStyle: {
-                    ...TYPOGRAPHY.small,
-                    fontWeight: '600',
+                    ...TYPOGRAPHY.smallMedium,
                 },
             }}
         >
@@ -77,8 +108,8 @@ export default function TabNavigator() {
                 options={{
                     tabBarLabel: () => null,
                     tabBarIcon: ({ color }) => (
-                        <View style={{ marginTop: Platform.OS === 'ios' ? 0 : 0 }}>
-                            <Ionicons name="home" size={32} color="white" />
+                        <View style={{ marginTop: 8 }}>
+                            <Ionicons name="home" size={26} color="white" />
                         </View>
                     ),
                     tabBarButton: (props) => (
@@ -110,19 +141,18 @@ export default function TabNavigator() {
 
 const styles = StyleSheet.create({
     customButtonContainer: {
-        top: -30,
+        top: -20,
         justifyContent: 'center',
         alignItems: 'center',
         ...SHADOWS.large,
     },
     customButton: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: COLORS.primary,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 4,
-        borderColor: COLORS.surface,
+        borderColor: COLORS.background, // Match the gap to background
     },
 });

@@ -10,7 +10,8 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, TYPOGRAPHY, SHADOWS, BORDER_RADIUS } from '../../constants/theme';
-import Svg, { Circle, G } from 'react-native-svg';
+import Svg, { Circle, G, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import ScreenBackground from '../../components/common/ScreenBackground';
 
 const { width } = Dimensions.get('window');
 
@@ -54,6 +55,13 @@ const MasterRing: React.FC<{ score: number }> = ({ score }) => {
     return (
         <View style={styles.ringContainer}>
             <Svg width={size} height={size}>
+                <Defs>
+                    <SvgGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <Stop offset="0%" stopColor={COLORS.accentGradient[0]} />
+                        <Stop offset="50%" stopColor={COLORS.accentGradient[1]} />
+                        <Stop offset="100%" stopColor={COLORS.accentGradient[2]} />
+                    </SvgGradient>
+                </Defs>
                 <G rotation="-90" origin={`${size / 2}, ${size / 2}`}>
                     {/* Background Circle */}
                     <Circle
@@ -63,6 +71,7 @@ const MasterRing: React.FC<{ score: number }> = ({ score }) => {
                         stroke={COLORS.surfaceLight}
                         strokeWidth={strokeWidth}
                         fill="none"
+                        opacity={0.3}
                     />
                     {/* Progress Circle */}
                     <Circle
@@ -97,10 +106,7 @@ export default function DashboardScreen() {
     ];
 
     return (
-        <LinearGradient
-            colors={[COLORS.background, '#0F1535']}
-            style={styles.container}
-        >
+        <ScreenBackground style={styles.container}>
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
@@ -133,7 +139,7 @@ export default function DashboardScreen() {
                 {/* Current Streak */}
                 <View style={styles.streakCard}>
                     <LinearGradient
-                        colors={[COLORS.gradientStart, COLORS.gradientEnd]}
+                        colors={COLORS.accentGradient}
                         style={styles.streakGradient}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
@@ -181,7 +187,7 @@ export default function DashboardScreen() {
                     </TouchableOpacity>
                 </View>
             </ScrollView>
-        </LinearGradient>
+        </ScreenBackground>
     );
 }
 
@@ -232,10 +238,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     ringScore: {
-        ...TYPOGRAPHY.h1,
-        fontSize: 48,
+        fontSize: 36,
+        lineHeight: 48,
         color: COLORS.text,
-        fontWeight: '700',
+        fontFamily: 'PressStart2P',
+        fontWeight: '400',
     },
     ringLabel: {
         ...TYPOGRAPHY.caption,
@@ -291,6 +298,8 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.md,
         borderRadius: BORDER_RADIUS.lg,
         overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
         ...SHADOWS.medium,
     },
     moduleGradient: {
@@ -307,7 +316,6 @@ const styles = StyleSheet.create({
     moduleTitle: {
         ...TYPOGRAPHY.body,
         color: COLORS.text,
-        fontWeight: '600',
         marginBottom: SPACING.xs,
     },
     moduleScore: {
@@ -343,6 +351,5 @@ const styles = StyleSheet.create({
         color: COLORS.text,
         flex: 1,
         marginLeft: SPACING.md,
-        fontWeight: '500',
     },
 });

@@ -4,9 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../constants/theme';
 
+import ScreenBackground from '../../components/common/ScreenBackground';
+
 export default function SpiritScreen() {
     return (
-        <LinearGradient colors={[COLORS.background, '#0F1535']} style={styles.container}>
+        <ScreenBackground style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.iconContainer}>
                     <Ionicons name="moon" size={64} color={COLORS.spirit} />
@@ -17,7 +19,7 @@ export default function SpiritScreen() {
                     Track your daily prayers and Quran reading progress
                 </Text>
             </ScrollView>
-        </LinearGradient>
+        </ScreenBackground>
     );
 }
 

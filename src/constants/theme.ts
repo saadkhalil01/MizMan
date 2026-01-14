@@ -1,33 +1,37 @@
 export const COLORS = {
-  // Primary Palette - Deep, Premium Colors
-  primary: '#6C63FF',      // Vibrant Purple
-  secondary: '#FF6584',    // Coral Pink
-  accent: '#4ECDC4',       // Turquoise
-  
+  // Primary Palette - Vibrant, Lighter Colors
+  primary: '#8B7FFF',      // Lighter Vibrant Purple
+  secondary: '#FF7FA3',    // Lighter Coral Pink
+  accent: '#5EDDD4',       // Lighter Turquoise
+
   // Module Colors
-  spirit: '#9D84FF',       // Spiritual Purple
-  body: '#FF6B9D',         // Fitness Pink
-  mind: '#4ECDC4',         // Mental Teal
-  wealth: '#FFD93D',       // Gold
-  
-  // Backgrounds
-  background: '#0A0E27',   // Deep Navy
-  surface: '#1A1F3A',      // Card Background
-  surfaceLight: '#252B48', // Lighter Surface
-  
+  spirit: '#B39DFF',       // Lighter Spiritual Purple
+  body: '#FF85B3',         // Lighter Fitness Pink
+  mind: '#5EDDD4',         // Lighter Mental Teal
+  wealth: '#FFE066',       // Lighter Gold
+
+  // Backgrounds - Lighter
+  background: '#0F1629',   // Lighter Navy
+  surface: '#1A2038',      // Lighter Surface
+  surfaceLight: '#252D4A', // Even Lighter Surface
+
   // Text
   text: '#FFFFFF',
-  textSecondary: '#A0A3BD',
-  textMuted: '#6E7191',
-  
+  textSecondary: '#B4C6E7', // Lighter Slate
+  textMuted: '#8B9DC3',    // Lighter Muted
+
   // Status
-  success: '#06FFA5',
-  warning: '#FFB800',
-  error: '#FF4757',
-  
-  // Gradients
-  gradientStart: '#6C63FF',
-  gradientEnd: '#4ECDC4',
+  success: '#34D399',      // Lighter Green
+  warning: '#FBBF24',      // Lighter Warning
+  error: '#F87171',        // Lighter Red
+
+  // Premium Gradients - Lighter
+  premiumGradient: ['#0F1629', '#1A2545', '#0F1629'] as const,
+  accentGradient: ['#7C70FF', '#B794F6', '#F472B6'] as const, // Lighter Indigo -> Purple -> Pink
+  spiritGradient: ['#9D91FF', '#7C70FF'] as const,
+  bodyGradient: ['#FF8FC7', '#F472B6'] as const,
+  mindGradient: ['#5FE3D4', '#2DD4BF'] as const,
+  wealthGradient: ['#FFD666', '#FBBF24'] as const,
 };
 
 export const SPACING = {
@@ -41,34 +45,64 @@ export const SPACING = {
 
 export const TYPOGRAPHY = {
   h1: {
-    fontSize: 32,
-    fontWeight: '700' as const,
-    lineHeight: 40,
+    fontSize: 20,
+    fontWeight: '400' as const,
+    lineHeight: 32,
+    fontFamily: 'PressStart2P',
   },
   h2: {
-    fontSize: 24,
-    fontWeight: '600' as const,
-    lineHeight: 32,
+    fontSize: 16,
+    fontWeight: '400' as const,
+    lineHeight: 26,
+    fontFamily: 'PressStart2P',
   },
   h3: {
-    fontSize: 20,
-    fontWeight: '600' as const,
-    lineHeight: 28,
+    fontSize: 12,
+    fontWeight: '400' as const,
+    lineHeight: 20,
+    fontFamily: 'PressStart2P',
   },
   body: {
     fontSize: 16,
     fontWeight: '400' as const,
     lineHeight: 24,
+    fontFamily: 'Inter-Regular',
+  },
+  bodyMedium: {
+    fontSize: 16,
+    fontWeight: '500' as const,
+    lineHeight: 24,
+    fontFamily: 'Inter-Medium',
+  },
+  bodySemiBold: {
+    fontSize: 16,
+    fontWeight: '600' as const,
+    lineHeight: 24,
+    fontFamily: 'Inter-SemiBold',
   },
   caption: {
     fontSize: 14,
     fontWeight: '400' as const,
     lineHeight: 20,
+    fontFamily: 'Inter-Regular',
+  },
+  captionMedium: {
+    fontSize: 14,
+    fontWeight: '500' as const,
+    lineHeight: 20,
+    fontFamily: 'Inter-Medium',
   },
   small: {
     fontSize: 12,
     fontWeight: '400' as const,
-    lineHeight: 16,
+    lineHeight: 18,
+    fontFamily: 'Inter-Regular',
+  },
+  smallMedium: {
+    fontSize: 12,
+    fontWeight: '500' as const,
+    lineHeight: 18,
+    fontFamily: 'Inter-Medium',
   },
 };
 

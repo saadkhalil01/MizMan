@@ -1,11 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { View, ActivityIndicator } from 'react-native';
+import * as Font from 'expo-font';
 import TabNavigator from './src/navigation/TabNavigator';
 import { COLORS } from './src/constants/theme';
 
 export default function App() {
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    async function loadFonts() {
+      await Font.loadAsync({
+        'PressStart2P': require('./assets/fonts/PressStart2P-Regular.ttf'),
+        'Inter-Regular': require('./assets/fonts/Inter-Regular.ttf'),
+        'Inter-Medium': require('./assets/fonts/Inter-Medium.ttf'),
+        'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf'),
+      });
+      setFontsLoaded(true);
+    }
+    loadFonts();
+  }, []);
+
+  if (!fontsLoaded) {
+    return (
+      <View style={{ flex: 1, backgroundColor: COLORS.background, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaProvider>
       <NavigationContainer
@@ -21,20 +46,20 @@ export default function App() {
           },
           fonts: {
             regular: {
-              fontFamily: 'System',
+              fontFamily: 'Inter-Regular',
               fontWeight: '400',
             },
             medium: {
-              fontFamily: 'System',
+              fontFamily: 'Inter-Medium',
               fontWeight: '500',
             },
             bold: {
-              fontFamily: 'System',
-              fontWeight: '700',
+              fontFamily: 'Inter-SemiBold',
+              fontWeight: '600',
             },
             heavy: {
-              fontFamily: 'System',
-              fontWeight: '900',
+              fontFamily: 'Inter-SemiBold',
+              fontWeight: '600',
             },
           },
         }}

@@ -4,9 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, TYPOGRAPHY } from '../../constants/theme';
 
+import ScreenBackground from '../../components/common/ScreenBackground';
+
 export default function MindScreen() {
     return (
-        <LinearGradient colors={[COLORS.background, '#0F1535']} style={styles.container}>
+        <ScreenBackground style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.iconContainer}>
                     <Ionicons name="bulb" size={64} color={COLORS.mind} />
@@ -17,7 +19,7 @@ export default function MindScreen() {
                     Monitor your digital wellbeing and focus score
                 </Text>
             </ScrollView>
-        </LinearGradient>
+        </ScreenBackground>
     );
 }
 
