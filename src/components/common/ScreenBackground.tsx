@@ -26,19 +26,19 @@ const ScreenBackground: React.FC<ScreenBackgroundProps> = ({ children, style }) 
             {/* Decorative Blobs for Depth */}
             <View style={styles.blobContainer}>
                 <LinearGradient
-                    colors={['rgba(124, 112, 255, 0.2)', 'transparent']}
+                    colors={['rgba(253, 224, 71, 0.2)', 'transparent']}
                     style={[styles.blob, styles.blobTopLeft]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                 />
                 <LinearGradient
-                    colors={['rgba(244, 114, 182, 0.15)', 'transparent']}
+                    colors={['rgba(251, 191, 36, 0.15)', 'transparent']}
                     style={[styles.blob, styles.blobBottomRight]}
                     start={{ x: 1, y: 1 }}
                     end={{ x: 0, y: 0 }}
                 />
                 <LinearGradient
-                    colors={['rgba(183, 148, 246, 0.18)', 'transparent']}
+                    colors={['rgba(234, 179, 8, 0.18)', 'transparent']}
                     style={[styles.blob, styles.blobCenter]}
                     start={{ x: 0.5, y: 0.5 }}
                     end={{ x: 0, y: 0 }}

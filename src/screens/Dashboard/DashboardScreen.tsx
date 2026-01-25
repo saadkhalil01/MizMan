@@ -222,10 +222,10 @@ export default function DashboardScreen() {
                                 datasets: [{
                                     data: [90, 75, 88, 82],
                                     colors: [
-                                        (opacity = 1) => `rgba(179, 157, 255, ${opacity})`,
-                                        (opacity = 1) => `rgba(255, 133, 179, ${opacity})`,
+                                        (opacity = 1) => `rgba(254, 249, 195, ${opacity})`, // spirit light yellow
+                                        (opacity = 1) => `rgba(253, 230, 138, ${opacity})`, // body soft yellow
                                         (opacity = 1) => `rgba(94, 221, 212, ${opacity})`,
-                                        (opacity = 1) => `rgba(255, 224, 102, ${opacity})`,
+                                        (opacity = 1) => `rgba(245, 158, 11, ${opacity})`, // wealth amber
                                     ]
                                 }]
                             }}

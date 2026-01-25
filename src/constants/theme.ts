@@ -1,14 +1,16 @@
 export const COLORS = {
   // Primary Palette - Vibrant, Lighter Colors
-  primary: '#8B7FFF',      // Lighter Vibrant Purple
-  secondary: '#FF7FA3',    // Lighter Coral Pink
-  accent: '#5EDDD4',       // Lighter Turquoise
+  primary: '#FDE047',      // Bright Yellow
+  secondary: '#FBBF24',    // Warm Yellow
+  accent: '#EAB308',       // Gold
 
   // Module Colors
-  spirit: '#B39DFF',       // Lighter Spiritual Purple
-  body: '#FF85B3',         // Lighter Fitness Pink
-  mind: '#5EDDD4',         // Lighter Mental Teal
-  wealth: '#FFE066',       // Lighter Gold
+  spirit: '#FEF9C3',       // Very Light Yellow
+  body: '#FDE68A',         // Soft Yellow
+  mind: '#5EDDD4',         // Keeping Teal for contrast or should I change it too? 
+  // User only said dashboard theme, so I'll keep mind/wealth for now but adjust if needed.
+
+  wealth: '#F59E0B',       // Deep Gold / Amber
 
   // Backgrounds - Lighter
   background: '#0F1629',   // Lighter Navy
@@ -27,11 +29,11 @@ export const COLORS = {
 
   // Premium Gradients - Lighter
   premiumGradient: ['#0F1629', '#1A2545', '#0F1629'] as const,
-  accentGradient: ['#7C70FF', '#B794F6', '#F472B6'] as const, // Lighter Indigo -> Purple -> Pink
-  spiritGradient: ['#9D91FF', '#7C70FF'] as const,
-  bodyGradient: ['#FF8FC7', '#F472B6'] as const,
+  accentGradient: ['#FDE047', '#FBBF24', '#F59E0B'] as const, // Yellow -> Gold -> Amber
+  spiritGradient: ['#FEF9C3', '#FDE047'] as const,
+  bodyGradient: ['#FDE68A', '#FBBF24'] as const,
   mindGradient: ['#5FE3D4', '#2DD4BF'] as const,
-  wealthGradient: ['#FFD666', '#FBBF24'] as const,
+  wealthGradient: ['#FBBF24', '#F59E0B'] as const,
 };
 
 export const SPACING = {
