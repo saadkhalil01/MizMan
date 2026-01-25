@@ -343,6 +343,7 @@ const styles = StyleSheet.create({
     },
     ringCenter: {
         position: 'absolute',
+        top: '39%',
         justifyContent: 'center',
         alignItems: 'center',
     },
