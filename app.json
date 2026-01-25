@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "mizaan-app",
-    "slug": "mizaan-app",
+    "name": "MizMan",
+    "slug": "mizman",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

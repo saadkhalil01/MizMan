@@ -12,6 +12,7 @@ import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Brain, Dumbbell } from 'lucide-react-native';
 import { COLORS, SPACING, TYPOGRAPHY, SHADOWS, BORDER_RADIUS } from '../../constants/theme';
 import Svg, { Circle, G, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import { LineChart, BarChart } from 'react-native-chart-kit';
 import ScreenBackground from '../../components/common/ScreenBackground';
 
 const { width } = Dimensions.get('window');
@@ -46,9 +47,8 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ title, icon, score, color, onPr
     );
 };
 
-const MasterRing: React.FC<{ score: number }> = ({ score }) => {
-    const size = 220;
-    const strokeWidth = 20;
+const MasterRing: React.FC<{ score: number; size?: number }> = ({ score, size = 220 }) => {
+    const strokeWidth = size * 0.09;
     const radius = (size - strokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
     const progress = circumference - (score / 100) * circumference;
@@ -89,8 +89,7 @@ const MasterRing: React.FC<{ score: number }> = ({ score }) => {
                 </G>
             </Svg>
             <View style={styles.ringCenter}>
-                <Text style={styles.ringScore}>{score}%</Text>
-                <Text style={styles.ringLabel}>Master Score</Text>
+                <Text style={[styles.ringScore, { fontSize: size * 0.18 }]}>{score}</Text>
             </View>
         </View>
     );
@@ -100,10 +99,10 @@ export default function DashboardScreen() {
     // Mock data - will be replaced with actual data from context
     const masterScore = 85;
     const modules = [
-        { title: 'Spirit', icon: <Ionicons name="moon" size={28} color={COLORS.spirit} />, score: 90, color: COLORS.spirit },
-        { title: 'Body', icon: <Dumbbell size={28} color={COLORS.body} />, score: 75, color: COLORS.body },
-        { title: 'Mind', icon: <Brain size={28} color={COLORS.mind} />, score: 88, color: COLORS.mind },
-        { title: 'Wealth', icon: <MaterialIcons name="attach-money" size={28} color={COLORS.wealth} />, score: 82, color: COLORS.wealth },
+        { title: 'Spirit', icon: <Ionicons name="moon" size={24} color={COLORS.spirit} />, score: 90, color: COLORS.spirit },
+        { title: 'Body', icon: <Dumbbell size={24} color={COLORS.body} />, score: 75, color: COLORS.body },
+        { title: 'Mind', icon: <Brain size={24} color={COLORS.mind} />, score: 88, color: COLORS.mind },
+        { title: 'Wealth', icon: <MaterialIcons name="attach-money" size={24} color={COLORS.wealth} />, score: 82, color: COLORS.wealth },
     ];
 
     return (
@@ -118,45 +117,112 @@ export default function DashboardScreen() {
                         <Text style={styles.greeting}>Assalamu Alaikum</Text>
                         <Text style={styles.date}>
                             {new Date().toLocaleDateString('en-US', {
-                                weekday: 'long',
-                                month: 'long',
+                                weekday: 'short',
+                                month: 'short',
                                 day: 'numeric',
                             })}
                         </Text>
                     </View>
                     <TouchableOpacity style={styles.notificationButton}>
-                        <Ionicons name="notifications-outline" size={24} color={COLORS.text} />
+                        <Ionicons name="notifications-outline" size={22} color={COLORS.text} />
                     </TouchableOpacity>
                 </View>
 
-                {/* Master Ring */}
-                <View style={styles.masterRingSection}>
-                    <MasterRing score={masterScore} />
-                    <Text style={styles.masterRingSubtext}>
-                        You're in the top 15% of users
-                    </Text>
+                {/* Overview Row: Ring + Streak */}
+                <View style={styles.overviewRow}>
+                    <View style={styles.masterRingSectionCompact}>
+                        <MasterRing score={masterScore} size={150} />
+                    </View>
+                    <View style={styles.highlightsColumn}>
+                        <TouchableOpacity style={styles.streakHighlight}>
+                            <LinearGradient
+                                colors={COLORS.accentGradient}
+                                style={styles.streakGradientSmall}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 0 }}
+                            >
+                                <Ionicons name="flame" size={24} color={COLORS.text} />
+                                <View style={styles.streakInfoSmall}>
+                                    <Text style={styles.streakNumberSmall}>24</Text>
+                                    <Text style={styles.highlightsLabel}>Days</Text>
+                                </View>
+                            </LinearGradient>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.dailyQuoteCard}>
+                            <Text style={styles.quoteText}>"Balance is the key to Mizaan."</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
-                {/* Current Streak */}
-                <View style={styles.streakCard}>
-                    <LinearGradient
-                        colors={COLORS.accentGradient}
-                        style={styles.streakGradient}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                    >
-                        <Ionicons name="flame" size={32} color={COLORS.text} />
-                        <View style={styles.streakInfo}>
-                            <Text style={styles.streakNumber}>24</Text>
-                            <Text style={styles.streakLabel}>Day Streak</Text>
-                        </View>
-                        <Ionicons name="chevron-forward" size={24} color={COLORS.text} />
-                    </LinearGradient>
-                </View>
+                {/* Compact Charts Section */}
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.chartsCarousel}
+                    contentContainerStyle={styles.chartsCarouselContent}
+                >
+                    {/* Mizaan Index */}
+                    <View style={styles.chartCardCompact}>
+                        <Text style={styles.chartTitleCompact}>Mizaan Index</Text>
+                        <LineChart
+                            data={{
+                                labels: ["M", "T", "W", "T", "F", "S", "S"],
+                                datasets: [{ data: [65, 78, 82, 75, 90, 88, 85] }]
+                            }}
+                            width={width * 0.75}
+                            height={160}
+                            chartConfig={{
+                                backgroundColor: COLORS.surface,
+                                backgroundGradientFrom: COLORS.surface,
+                                backgroundGradientTo: COLORS.surfaceLight,
+                                decimalPlaces: 0,
+                                color: (opacity = 1) => `rgba(139, 127, 255, ${opacity})`,
+                                labelColor: (opacity = 1) => `rgba(180, 198, 231, ${opacity})`,
+                                propsForDots: { r: "3", strokeWidth: "2", stroke: COLORS.primary },
+                            }}
+                            bezier
+                            style={styles.chartInner}
+                            withInnerLines={false}
+                            withOuterLines={false}
+                        />
+                    </View>
+
+                    {/* Pillar Balance */}
+                    <View style={styles.chartCardCompact}>
+                        <Text style={styles.chartTitleCompact}>Pillar Balance</Text>
+                        <BarChart
+                            data={{
+                                labels: ["S", "B", "M", "W"],
+                                datasets: [{ data: [90, 75, 88, 82] }]
+                            }}
+                            width={width * 0.75}
+                            height={160}
+                            yAxisLabel=""
+                            yAxisSuffix="%"
+                            chartConfig={{
+                                backgroundColor: COLORS.surface,
+                                backgroundGradientFrom: COLORS.surface,
+                                backgroundGradientTo: COLORS.surfaceLight,
+                                decimalPlaces: 0,
+                                color: (opacity = 1) => `rgba(179, 157, 255, ${opacity})`,
+                                labelColor: (opacity = 1) => `rgba(180, 198, 231, ${opacity})`,
+                            }}
+                            style={styles.chartInner}
+                            fromZero
+                            withInnerLines={false}
+                        />
+                    </View>
+                </ScrollView>
 
                 {/* Module Cards */}
-                <View style={styles.modulesSection}>
-                    <Text style={styles.sectionTitle}>Your Pillars</Text>
+                <View style={styles.modulesSectionCompact}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionTitleSmall}>Your Pillars</Text>
+                        <TouchableOpacity>
+                            <Text style={styles.viewAllText}>View All</Text>
+                        </TouchableOpacity>
+                    </View>
                     <View style={styles.modulesGrid}>
                         {modules.map((module, index) => (
                             <ModuleCard
@@ -171,19 +237,17 @@ export default function DashboardScreen() {
                     </View>
                 </View>
 
-                {/* Quick Actions */}
-                <View style={styles.quickActions}>
-                    <Text style={styles.sectionTitle}>Quick Actions</Text>
-                    <TouchableOpacity style={styles.actionButton}>
+                {/* Quick Action Button - Floating Style-ish */}
+                <View style={[styles.quickActions, { marginBottom: SPACING.lg }]}>
+                    <TouchableOpacity style={styles.actionButtonCompact}>
                         <LinearGradient
-                            colors={[COLORS.surface, COLORS.surfaceLight]}
-                            style={styles.actionGradient}
+                            colors={COLORS.accentGradient}
+                            style={styles.actionGradientCompact}
                             start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
+                            end={{ x: 1, y: 0 }}
                         >
-                            <Ionicons name="add-circle" size={24} color={COLORS.primary} />
-                            <Text style={styles.actionText}>Log Today's Progress</Text>
-                            <Ionicons name="chevron-forward" size={20} color={COLORS.textSecondary} />
+                            <Ionicons name="add" size={24} color={COLORS.text} />
+                            <Text style={styles.actionTextCompact}>Log Entry</Text>
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>
@@ -250,11 +314,7 @@ const styles = StyleSheet.create({
         color: COLORS.textSecondary,
         marginTop: SPACING.xs,
     },
-    masterRingSubtext: {
-        ...TYPOGRAPHY.caption,
-        color: COLORS.textMuted,
-        marginTop: SPACING.md,
-    },
+
     streakCard: {
         marginHorizontal: SPACING.lg,
         marginBottom: SPACING.xl,
@@ -352,5 +412,126 @@ const styles = StyleSheet.create({
         color: COLORS.text,
         flex: 1,
         marginLeft: SPACING.md,
+    },
+    chartSection: {
+        paddingHorizontal: SPACING.lg,
+        marginBottom: SPACING.xl,
+    },
+    chartContainer: {
+        borderRadius: BORDER_RADIUS.lg,
+        overflow: 'hidden',
+        ...SHADOWS.medium,
+        backgroundColor: COLORS.surface,
+    },
+    overviewRow: {
+        flexDirection: 'row',
+        paddingHorizontal: SPACING.lg,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: SPACING.lg,
+    },
+    masterRingSectionCompact: {
+        flex: 1,
+        alignItems: 'flex-start',
+    },
+    highlightsColumn: {
+        flex: 1,
+        marginLeft: SPACING.md,
+        gap: SPACING.sm,
+    },
+    streakHighlight: {
+        borderRadius: BORDER_RADIUS.md,
+        overflow: 'hidden',
+        ...SHADOWS.small,
+    },
+    streakGradientSmall: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: SPACING.md,
+        gap: SPACING.sm,
+    },
+    streakInfoSmall: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+        gap: 2,
+    },
+    streakNumberSmall: {
+        ...TYPOGRAPHY.h2,
+        color: COLORS.text,
+    },
+    highlightsLabel: {
+        ...TYPOGRAPHY.small,
+        color: COLORS.text,
+        opacity: 0.8,
+    },
+    dailyQuoteCard: {
+        backgroundColor: COLORS.surface,
+        padding: SPACING.md,
+        borderRadius: BORDER_RADIUS.md,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+    },
+    quoteText: {
+        ...TYPOGRAPHY.smallMedium,
+        color: COLORS.textSecondary,
+        fontStyle: 'italic',
+    },
+    chartsCarousel: {
+        marginBottom: SPACING.lg,
+    },
+    chartsCarouselContent: {
+        paddingHorizontal: SPACING.lg,
+        gap: SPACING.md,
+    },
+    chartCardCompact: {
+        backgroundColor: COLORS.surface,
+        borderRadius: BORDER_RADIUS.lg,
+        padding: SPACING.md,
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        ...SHADOWS.small,
+    },
+    chartTitleCompact: {
+        ...TYPOGRAPHY.h3,
+        color: COLORS.textSecondary,
+        marginBottom: SPACING.sm,
+    },
+    chartInner: {
+        borderRadius: BORDER_RADIUS.md,
+    },
+    modulesSectionCompact: {
+        paddingHorizontal: SPACING.lg,
+        marginBottom: SPACING.lg,
+    },
+    sectionHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: SPACING.md,
+    },
+    sectionTitleSmall: {
+        ...TYPOGRAPHY.h3,
+        color: COLORS.text,
+    },
+    viewAllText: {
+        ...TYPOGRAPHY.smallMedium,
+        color: COLORS.primary,
+    },
+    actionButtonCompact: {
+        borderRadius: BORDER_RADIUS.full,
+        overflow: 'hidden',
+        ...SHADOWS.medium,
+    },
+    actionGradientCompact: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: SPACING.md,
+        paddingHorizontal: SPACING.xl,
+        gap: SPACING.sm,
+    },
+    actionTextCompact: {
+        ...TYPOGRAPHY.bodyMedium,
+        color: COLORS.text,
     },
 });

@@ -1,4 +1,4 @@
-# Mizaan - Holistic Life Balance Tracker
+# MizMan - Holistic Life Balance Tracker
 
 **A high-performance life-tracking app that merges spiritual discipline, physical health, mental wellbeing, and financial growth into a unified "Master Score".**
 
@@ -6,7 +6,7 @@
 
 ## 🎯 The Mission
 
-Most habit trackers are fragmented. You need 5 different apps to track Namaz, Gym, and Portfolio. **Mizaan** unifies them to provide a **Holistic Discipline Score** that shows your true life balance.
+Most habit trackers are fragmented. You need 5 different apps to track Namaz, Gym, and Portfolio. **MizMan** unifies them to provide a **Holistic Discipline Score** that shows your true life balance.
 
 ---
 
@@ -45,7 +45,7 @@ Most habit trackers are fragmented. You need 5 different apps to track Namaz, Gy
 ## 📂 Project Structure
 
 ```
-mizaan-app/
+mizman-app/
 ├── src/
 │   ├── screens/
 │   │   ├── Dashboard/      # Master dashboard with ring progress
@@ -101,7 +101,7 @@ npm run web      # Web Browser
 
 ### Mindful Wealth Management
 
-Unlike other finance apps, Mizaan uses **manual weekly updates** instead of automated bank connections. This forces users to:
+Unlike other finance apps, MizMan uses **manual weekly updates** instead of automated bank connections. This forces users to:
 
 - Actually look at their investment progress
 - Make conscious financial decisions
