@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     View,
     Text,
@@ -7,6 +6,7 @@ import {
     Dimensions,
     TouchableOpacity,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 import { Brain, Dumbbell } from 'lucide-react-native';
@@ -89,13 +89,14 @@ const MasterRing: React.FC<{ score: number; size?: number }> = ({ score, size = 
                 </G>
             </Svg>
             <View style={styles.ringCenter}>
-                <Text style={[styles.ringScore, { fontSize: size * 0.18 }]}>{score}</Text>
+                <Text style={[styles.ringScore, { fontSize: size * 0.25 }]}>{score}</Text>
             </View>
         </View>
     );
 };
 
 export default function DashboardScreen() {
+    const insets = useSafeAreaInsets();
     // Mock data - will be replaced with actual data from context
     const masterScore = 85;
     const modules = [
@@ -108,11 +109,14 @@ export default function DashboardScreen() {
     return (
         <ScreenBackground style={styles.container}>
             <ScrollView
-                contentContainerStyle={styles.scrollContent}
+                contentContainerStyle={[
+                    styles.scrollContent,
+                    { paddingBottom: insets.bottom + SPACING.xxl * 2 }
+                ]}
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
-                <View style={styles.header}>
+                <View style={[styles.header, { paddingTop: insets.top + SPACING.md }]}>
                     <View>
                         <Text style={styles.greeting}>Assalamu Alaikum</Text>
                         <Text style={styles.date}>
@@ -149,71 +153,112 @@ export default function DashboardScreen() {
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.dailyQuoteCard}>
+                        <View style={styles.dailyQuoteCard}>
+                            <LinearGradient
+                                colors={[COLORS.surfaceLight, COLORS.surface]}
+                                style={StyleSheet.absoluteFill}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                            />
                             <Text style={styles.quoteText}>"Balance is the key to Mizaan."</Text>
-                        </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
 
                 {/* Compact Charts Section */}
-                <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.chartsCarousel}
-                    contentContainerStyle={styles.chartsCarouselContent}
-                >
+                <View style={styles.chartsSection}>
                     {/* Mizaan Index */}
-                    <View style={styles.chartCardCompact}>
+                    <View style={styles.chartCard}>
                         <Text style={styles.chartTitleCompact}>Mizaan Index</Text>
                         <LineChart
                             data={{
                                 labels: ["M", "T", "W", "T", "F", "S", "S"],
-                                datasets: [{ data: [65, 78, 82, 75, 90, 88, 85] }]
+                                datasets: [{
+                                    data: [65, 78, 82, 75, 90, 88, 85]
+                                }]
                             }}
-                            width={width * 0.75}
-                            height={160}
+                            width={width - (SPACING.lg * 1.5) - (SPACING.md * 2)}
+                            height={180}
+                            yLabelsOffset={30}
+                            xLabelsOffset={-5}
+
                             chartConfig={{
                                 backgroundColor: COLORS.surface,
                                 backgroundGradientFrom: COLORS.surface,
                                 backgroundGradientTo: COLORS.surfaceLight,
                                 decimalPlaces: 0,
-                                color: (opacity = 1) => `rgba(139, 127, 255, ${opacity})`,
-                                labelColor: (opacity = 1) => `rgba(180, 198, 231, ${opacity})`,
-                                propsForDots: { r: "3", strokeWidth: "2", stroke: COLORS.primary },
+                                color: (opacity = 1) => `rgba(52, 211, 153, ${opacity})`, // COLORS.success
+                                labelColor: (opacity = 1) => `rgba(180, 198, 231, ${opacity})`, // COLORS.textSecondary
+                                propsForDots: {
+                                    r: "2",
+                                    strokeWidth: "3",
+                                    stroke: COLORS.success
+                                },
+                                propsForBackgroundLines: {
+                                    strokeDasharray: "", // solid background lines
+                                    stroke: "rgba(255, 255, 255, 0.05)",
+                                },
+                                fillShadowGradient: COLORS.success,
+                                fillShadowGradientOpacity: 0.2,
+                                useShadowColorFromDataset: false,
                             }}
                             bezier
                             style={styles.chartInner}
                             withInnerLines={false}
                             withOuterLines={false}
+                            withVerticalLines={false}
+                            withHorizontalLines={true}
+                            segments={4}
+                            formatYLabel={(y) => `${Math.round(Number(y))}`}
                         />
                     </View>
 
                     {/* Pillar Balance */}
-                    <View style={styles.chartCardCompact}>
+                    <View style={styles.chartCard}>
                         <Text style={styles.chartTitleCompact}>Pillar Balance</Text>
                         <BarChart
                             data={{
                                 labels: ["S", "B", "M", "W"],
-                                datasets: [{ data: [90, 75, 88, 82] }]
+                                datasets: [{
+                                    data: [90, 75, 88, 82],
+                                    colors: [
+                                        (opacity = 1) => `rgba(179, 157, 255, ${opacity})`,
+                                        (opacity = 1) => `rgba(255, 133, 179, ${opacity})`,
+                                        (opacity = 1) => `rgba(94, 221, 212, ${opacity})`,
+                                        (opacity = 1) => `rgba(255, 224, 102, ${opacity})`,
+                                    ]
+                                }]
                             }}
-                            width={width * 0.75}
-                            height={160}
+                            width={width - (SPACING.lg * 1.5) - (SPACING.md * 2)}
+                            height={180}
                             yAxisLabel=""
                             yAxisSuffix="%"
+                            yLabelsOffset={30}
+                            xLabelsOffset={-5}
                             chartConfig={{
                                 backgroundColor: COLORS.surface,
                                 backgroundGradientFrom: COLORS.surface,
                                 backgroundGradientTo: COLORS.surfaceLight,
                                 decimalPlaces: 0,
-                                color: (opacity = 1) => `rgba(179, 157, 255, ${opacity})`,
+                                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                                 labelColor: (opacity = 1) => `rgba(180, 198, 231, ${opacity})`,
+                                barPercentage: 1,
+                                barRadius: 5,
+                                propsForBackgroundLines: {
+                                    strokeDasharray: "",
+                                    stroke: "rgba(255, 255, 255, 0.05)",
+                                },
                             }}
                             style={styles.chartInner}
                             fromZero
                             withInnerLines={false}
+                            showBarTops={false}
+                            segments={4}
+                            withCustomBarColorFromData={true}
+                            flatColor={true}
                         />
                     </View>
-                </ScrollView>
+                </View>
 
                 {/* Module Cards */}
                 <View style={styles.modulesSectionCompact}>
@@ -261,14 +306,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContent: {
-        paddingBottom: SPACING.xxl,
+        paddingBottom: SPACING.xxl * 2,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: SPACING.lg,
-        paddingTop: SPACING.xxl + 20,
         paddingBottom: SPACING.lg,
     },
     greeting: {
@@ -303,8 +347,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     ringScore: {
-        fontSize: 36,
-        lineHeight: 48,
         color: COLORS.text,
         fontFamily: 'PressStart2P',
         fontWeight: '400',
@@ -465,39 +507,41 @@ const styles = StyleSheet.create({
         opacity: 0.8,
     },
     dailyQuoteCard: {
-        backgroundColor: COLORS.surface,
         padding: SPACING.md,
         borderRadius: BORDER_RADIUS.md,
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.05)',
+        overflow: 'hidden',
+        position: 'relative',
     },
     quoteText: {
         ...TYPOGRAPHY.smallMedium,
         color: COLORS.textSecondary,
         fontStyle: 'italic',
     },
-    chartsCarousel: {
-        marginBottom: SPACING.lg,
-    },
-    chartsCarouselContent: {
+    chartsSection: {
         paddingHorizontal: SPACING.lg,
         gap: SPACING.md,
+        marginBottom: SPACING.lg,
     },
-    chartCardCompact: {
+    chartCard: {
         backgroundColor: COLORS.surface,
         borderRadius: BORDER_RADIUS.lg,
-        padding: SPACING.md,
+        height: 240,
         borderWidth: 1,
         borderColor: 'rgba(255, 255, 255, 0.05)',
         ...SHADOWS.small,
+        justifyContent: 'center'
     },
     chartTitleCompact: {
         ...TYPOGRAPHY.h3,
         color: COLORS.textSecondary,
+        marginLeft: SPACING.sm + 10,
         marginBottom: SPACING.sm,
     },
     chartInner: {
         borderRadius: BORDER_RADIUS.md,
+        alignSelf: 'center',
     },
     modulesSectionCompact: {
         paddingHorizontal: SPACING.lg,

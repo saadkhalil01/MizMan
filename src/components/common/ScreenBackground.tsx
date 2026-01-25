@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StatusBar } from 'expo-status-bar';
 import { COLORS } from '../../constants/theme';
 
 const { width, height } = Dimensions.get('window');
@@ -13,6 +14,7 @@ interface ScreenBackgroundProps {
 const ScreenBackground: React.FC<ScreenBackgroundProps> = ({ children, style }) => {
     return (
         <View style={[styles.container, style]}>
+            <StatusBar style="light" />
             {/* Base Gradient */}
             <LinearGradient
                 colors={COLORS.premiumGradient}
