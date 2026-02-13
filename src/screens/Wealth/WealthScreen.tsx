@@ -5,10 +5,10 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  SafeAreaView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -17,15 +17,26 @@ import AssetModal, { Asset, ASSET_CATEGORIES } from '../../components/Wealth/Ass
 import NetWorthPieChart from '../../components/Wealth/NetWorthPieChart';
 
 const WEALTH_DATA_KEY = '@mizman_wealth_data';
+const CURRENCY_KEY = '@mizman_currency_preference';
+
+const CURRENCIES = [
+  { code: 'USD', symbol: '$', label: 'USD', locale: 'en-US' },
+  { code: 'PKR', symbol: 'PKR', label: 'PKR', locale: 'en-PK' },
+  { code: 'INR', symbol: '₹', label: 'INR', locale: 'en-IN' },
+  { code: 'AED', symbol: 'د.إ', label: 'AED', locale: 'ar-AE' },
+];
 
 export default function WealthScreen() {
   const { colors, isDark } = useTheme();
+  const insets = useSafeAreaInsets();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
+  const [selectedCurrency, setSelectedCurrency] = useState(CURRENCIES[0]);
 
   useEffect(() => {
     loadWealthData();
+    loadCurrencyPreference();
   }, []);
 
   const loadWealthData = async () => {
@@ -39,12 +50,37 @@ export default function WealthScreen() {
     }
   };
 
+  const loadCurrencyPreference = async () => {
+    try {
+      const storedCurrency = await AsyncStorage.getItem(CURRENCY_KEY);
+      if (storedCurrency) {
+        const found = CURRENCIES.find(c => c.code === storedCurrency);
+        if (found) setSelectedCurrency(found);
+      }
+    } catch (error) {
+      console.error('Error loading currency preference:', error);
+    }
+  };
+
   const saveWealthData = async (newAssets: Asset[]) => {
     try {
       await AsyncStorage.setItem(WEALTH_DATA_KEY, JSON.stringify(newAssets));
     } catch (error) {
       console.error('Error saving wealth data:', error);
     }
+  };
+
+  const saveCurrencyPreference = async (currencyCode: string) => {
+    try {
+      await AsyncStorage.setItem(CURRENCY_KEY, currencyCode);
+    } catch (error) {
+      console.error('Error saving currency preference:', error);
+    }
+  };
+
+  const handleCurrencyChange = (currency: typeof CURRENCIES[0]) => {
+    setSelectedCurrency(currency);
+    saveCurrencyPreference(currency.code);
   };
 
   const handleSaveAsset = (asset: Asset) => {
@@ -69,35 +105,68 @@ export default function WealthScreen() {
   const totalNetWorth = assets.reduce((sum, a) => sum + a.amount, 0);
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(selectedCurrency.locale, {
       style: 'currency',
-      currency: 'USD',
+      currency: selectedCurrency.code,
       maximumFractionDigits: 0,
     }).format(amount);
   };
 
   return (
     <ScreenBackground style={styles.container}>
-      <View style={styles.header}>
-        <View>
-          <Text style={[styles.title, { color: colors.text }]}>Wealth Module</Text>
-          <Text style={[styles.subtitle, { color: colors.wealth }]}>Net Worth Tracker</Text>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: insets.bottom + SPACING.xxl * 2 }
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <View>
+            <Text style={[styles.title, { color: colors.text }]}>Wealth Module</Text>
+            <Text style={[styles.subtitle, { color: colors.wealth }]}>Net Worth Tracker</Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.addButton, { backgroundColor: colors.wealth }]}
+            onPress={() => {
+              setEditingAsset(null);
+              setIsModalVisible(true);
+            }}
+          >
+            <Ionicons name="add" size={28} color={isDark ? colors.background : '#FFFFFF'} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={[styles.addButton, { backgroundColor: colors.wealth }]}
-          onPress={() => {
-            setEditingAsset(null);
-            setIsModalVisible(true);
-          }}
-        >
-          <Ionicons name="add" size={28} color={isDark ? colors.background : '#FFFFFF'} />
-        </TouchableOpacity>
-      </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
         <View style={[styles.summaryCard, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
           <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Total Net Worth</Text>
           <Text style={[styles.summaryValue, { color: colors.text }]}>{formatCurrency(totalNetWorth)}</Text>
+          
+          <View style={[styles.currencyPicker, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }]}>
+            {CURRENCIES.map((curr) => (
+              <TouchableOpacity
+                key={curr.code}
+                style={[
+                  styles.currencyButton,
+                  selectedCurrency.code === curr.code && { backgroundColor: colors.wealth }
+                ]}
+                onPress={() => handleCurrencyChange(curr)}
+              >
+                <Text 
+                  style={[
+                    styles.currencyButtonText, 
+                    { 
+                      color: selectedCurrency.code === curr.code 
+                        ? (isDark ? colors.background : '#FFFFFF') 
+                        : colors.textSecondary 
+                    }
+                  ]}
+                >
+                  {curr.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         {assets.length > 0 ? (
@@ -119,7 +188,9 @@ export default function WealthScreen() {
                   >
                     <View style={styles.assetInfo}>
                       <View style={[styles.assetIconContainer, { backgroundColor: colors.surfaceLight }]}>
-                         <MaterialIcons name="attach-money" size={20} color={colors.wealth} />
+                         <Text style={{ color: colors.wealth, ...TYPOGRAPHY.bodySemiBold, fontSize: 14 }}>
+                           {selectedCurrency.symbol}
+                         </Text>
                       </View>
                       <Text style={[styles.assetLabel, { color: colors.text }]}>{category?.label}</Text>
                     </View>
@@ -146,6 +217,7 @@ export default function WealthScreen() {
       <AssetModal
         isVisible={isModalVisible}
         editingAsset={editingAsset}
+        selectedCurrency={selectedCurrency}
         onClose={() => setIsModalVisible(false)}
         onSave={handleSaveAsset}
         onDelete={handleDeleteAsset}
@@ -156,12 +228,13 @@ export default function WealthScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  scrollView: { flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.md,
+    marginBottom: SPACING.md,
   },
   title: { ...TYPOGRAPHY.h2 },
   subtitle: { ...TYPOGRAPHY.smallMedium },
@@ -187,6 +260,22 @@ const styles = StyleSheet.create({
   summaryValue: {
     ...TYPOGRAPHY.h1,
     fontSize: 28,
+  },
+  currencyPicker: {
+    flexDirection: 'row',
+    marginTop: SPACING.md,
+    gap: SPACING.xs,
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    padding: 4,
+    borderRadius: BORDER_RADIUS.md,
+  },
+  currencyButton: {
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 4,
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  currencyButtonText: {
+    ...TYPOGRAPHY.smallMedium,
   },
   sectionTitle: {
     ...TYPOGRAPHY.h3,

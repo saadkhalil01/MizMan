@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateData } from 'react-native-calendars';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SPACING, TYPOGRAPHY } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -12,7 +13,8 @@ import PrayerModal from '../../components/Spirit/PrayerModal';
 const PRAYER_DATA_KEY = '@mizman_prayer_data';
 
 export default function SpiritScreen() {
-    const { colors, isDark } = useTheme();
+    const { colors } = useTheme();
+    const insets = useSafeAreaInsets();
     const [prayerData, setPrayerData] = useState<Record<string, Record<string, any>>>({});
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -110,7 +112,14 @@ export default function SpiritScreen() {
 
     return (
         <ScreenBackground style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content}>
+            <ScrollView 
+                style={styles.scrollView}
+                contentContainerStyle={[
+                    styles.content,
+                    { paddingBottom: insets.bottom + SPACING.xxl * 2 }
+                ]}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.header}>
                     <Text style={[styles.title, { color: colors.text }]}>Spirit Module</Text>
                     <Text style={[styles.subtitle, { color: colors.spirit }]}>{preferredReligion} Tracking</Text>
@@ -156,6 +165,7 @@ export default function SpiritScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    scrollView: { flex: 1 },
     content: { padding: SPACING.lg },
     header: { marginBottom: SPACING.xl, alignItems: 'center' },
     title: { ...TYPOGRAPHY.h1, marginBottom: SPACING.xs },

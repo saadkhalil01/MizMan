@@ -35,6 +35,7 @@ export interface Asset {
 interface AssetModalProps {
   isVisible: boolean;
   editingAsset: Asset | null;
+  selectedCurrency: { code: string; symbol: string; label: string; locale: string; };
   onClose: () => void;
   onSave: (asset: Asset) => void;
   onDelete?: (id: string) => void;
@@ -43,6 +44,7 @@ interface AssetModalProps {
 export default function AssetModal({
   isVisible,
   editingAsset,
+  selectedCurrency,
   onClose,
   onSave,
   onDelete,
@@ -124,7 +126,7 @@ export default function AssetModal({
 
             <Text style={[styles.label, { color: colors.textSecondary }]}>Amount</Text>
             <View style={[styles.inputContainer, { backgroundColor: colors.surfaceLight }]}>
-              <Text style={[styles.currencyPrefix, { color: colors.wealth }]}>$</Text>
+              <Text style={[styles.currencyPrefix, { color: colors.wealth }]}>{selectedCurrency.symbol}</Text>
               <TextInput
                 style={[styles.input, { color: colors.text }]}
                 value={amount}

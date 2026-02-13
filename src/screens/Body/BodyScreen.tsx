@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateData } from 'react-native-calendars';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SPACING, TYPOGRAPHY } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -13,6 +14,7 @@ const GYM_DATA_KEY = '@mizman_gym_data';
 
 export default function BodyScreen() {
     const { colors } = useTheme();
+    const insets = useSafeAreaInsets();
     const [gymData, setGymData] = useState<Record<string, { workoutDone: boolean }>>({});
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -69,7 +71,14 @@ export default function BodyScreen() {
 
     return (
         <ScreenBackground style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content}>
+            <ScrollView 
+                style={styles.scrollView}
+                contentContainerStyle={[
+                    styles.content,
+                    { paddingBottom: insets.bottom + SPACING.xxl * 2 }
+                ]}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.header}>
                     <Text style={[styles.title, { color: colors.text }]}>Body Module</Text>
                     <Text style={[styles.subtitle, { color: colors.body }]}>Fitness Tracker</Text>
@@ -111,6 +120,7 @@ export default function BodyScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    scrollView: { flex: 1 },
     content: { padding: SPACING.lg },
     header: { marginBottom: SPACING.xl, alignItems: 'center' },
     title: { ...TYPOGRAPHY.h1, marginBottom: SPACING.xs },

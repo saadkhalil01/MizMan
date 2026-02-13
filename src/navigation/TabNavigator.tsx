@@ -1,11 +1,12 @@
 import React, { useRef } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { View, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { BadgeDollarSign, Banknote, BanknoteIcon, BicepsFlexed, Brain, CircleDollarSign, Currency, DollarSign, Dumbbell, Moon, PiggyBank } from 'lucide-react-native';
-import { COLORS, TYPOGRAPHY, SHADOWS } from '../constants/theme';
+import { BicepsFlexed, Brain, CircleDollarSign, Moon } from 'lucide-react-native';
+import { TYPOGRAPHY, SHADOWS } from '../constants/theme';
 import { TabParamList } from '../types';
+import { useTheme } from '../context/ThemeContext';
 
 // Screens
 import DashboardScreen from '../screens/Dashboard/DashboardScreen';
@@ -17,6 +18,7 @@ import WealthScreen from '../screens/Wealth/WealthScreen';
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const CustomTabBarButton = ({ children, onPress }: any) => {
+    const { colors } = useTheme();
     const scaleAnim = useRef(new Animated.Value(1)).current;
 
     const handlePressIn = () => {
@@ -45,8 +47,8 @@ const CustomTabBarButton = ({ children, onPress }: any) => {
         >
             <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
                 <LinearGradient
-                    colors={COLORS.accentGradient}
-                    style={styles.customButton}
+                    colors={colors.accentGradient}
+                    style={[styles.customButton, { borderColor: colors.background }]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                 >
@@ -58,6 +60,8 @@ const CustomTabBarButton = ({ children, onPress }: any) => {
 };
 
 export default function TabNavigator() {
+    const { colors, isDark } = useTheme();
+
     return (
         <Tab.Navigator
             screenOptions={{
@@ -67,21 +71,21 @@ export default function TabNavigator() {
                     bottom: 25,
                     left: 20,
                     right: 20,
-                    backgroundColor: 'rgba(26, 32, 56, 0.95)', // Lighter translucent surface
+                    backgroundColor: isDark ? 'rgba(26, 32, 56, 0.95)' : 'rgba(255, 255, 255, 0.95)',
                     borderTopWidth: 0,
                     height: 65,
                     borderRadius: 32.5,
                     paddingBottom: Platform.OS === 'ios' ? 15 : 8,
                     paddingTop: 14,
                     borderWidth: 1,
-                    borderColor: 'rgba(255, 255, 255, 0.15)',
+                    borderColor: colors.surfaceLight,
                     ...SHADOWS.large,
                     elevation: 8,
                     justifyContent: 'center',
                     alignItems: 'center',
                 },
-                tabBarActiveTintColor: COLORS.primary,
-                tabBarInactiveTintColor: COLORS.textMuted,
+                tabBarActiveTintColor: colors.primary,
+                tabBarInactiveTintColor: colors.textSecondary,
                 tabBarShowLabel: false,
             }}
         >
@@ -89,7 +93,7 @@ export default function TabNavigator() {
                 name="Spirit"
                 component={SpiritScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => (
+                    tabBarIcon: ({ color }) => (
                         <Moon size={28} color={color} />
                     ),
                 }}
@@ -98,7 +102,7 @@ export default function TabNavigator() {
                 name="Body"
                 component={BodyScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => (
+                    tabBarIcon: ({ color }) => (
                         <BicepsFlexed size={26} color={color} />
                     ),
                 }}
@@ -108,7 +112,7 @@ export default function TabNavigator() {
                 component={DashboardScreen}
                 options={{
                     tabBarLabel: () => null,
-                    tabBarIcon: ({ color }) => (
+                    tabBarIcon: () => (
                         <View style={{}}>
                             <Ionicons name="home" size={26} color="white" />
                         </View>
@@ -122,7 +126,7 @@ export default function TabNavigator() {
                 name="Mind"
                 component={MindScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => (
+                    tabBarIcon: ({ color }) => (
                         <Brain size={26} color={color} />
                     ),
                 }}
@@ -131,7 +135,7 @@ export default function TabNavigator() {
                 name="Wealth"
                 component={WealthScreen}
                 options={{
-                    tabBarIcon: ({ color, size }) => (
+                    tabBarIcon: ({ color }) => (
                         <CircleDollarSign size={28} color={color} />
                     ),
                 }}
@@ -154,6 +158,5 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 4,
-        borderColor: COLORS.background, // Match the gap to background
     },
 });

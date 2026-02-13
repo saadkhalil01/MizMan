@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SPACING, TYPOGRAPHY } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -13,7 +14,8 @@ const LONGEST_STREAK_KEY = '@mizman_longest_streak';
 const SCREEN_TIME_DATA_KEY = '@mizman_screen_time_data';
 
 export default function MindScreen() {
-    const { colors, isDark } = useTheme();
+    const { colors } = useTheme();
+    const insets = useSafeAreaInsets();
     const [streakStartDate, setStreakStartDate] = useState<number | null>(null);
     const [longestStreak, setLongestStreak] = useState(0);
     const [screenTimeData, setScreenTimeData] = useState<number[]>([]);
@@ -83,7 +85,14 @@ export default function MindScreen() {
 
     return (
         <ScreenBackground style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content}>
+            <ScrollView 
+                style={styles.scrollView}
+                contentContainerStyle={[
+                    styles.content,
+                    { paddingBottom: insets.bottom + SPACING.xxl * 2 }
+                ]}
+                showsVerticalScrollIndicator={false}
+            >
                 <View style={styles.header}>
                     <Text style={[styles.title, { color: colors.text }]}>Mind Module</Text>
                     <Text style={[styles.subtitle, { color: colors.mind }]}>Digital Wellbeing</Text>
@@ -116,6 +125,7 @@ export default function MindScreen() {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    scrollView: { flex: 1 },
     content: { padding: SPACING.lg },
     header: { marginBottom: SPACING.xl, alignItems: 'center' },
     title: { ...TYPOGRAPHY.h1, marginBottom: SPACING.xs },
