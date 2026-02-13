@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 const CHART_WIDTH = Dimensions.get('window').width - 64;
 
@@ -19,6 +20,7 @@ export default function ScreenTimeTracker({
   onSync,
   isSyncing,
 }: ScreenTimeTrackerProps) {
+  const { colors, isDark } = useTheme();
   const averageValue = data.length > 0 ? (data.reduce((a, b) => a + b, 0) / data.length).toFixed(1) : '0';
 
   const chartData = {
@@ -32,11 +34,11 @@ export default function ScreenTimeTracker({
 
   const chartConfig = {
     backgroundColor: 'transparent',
-    backgroundGradientFrom: COLORS.surface,
-    backgroundGradientTo: COLORS.surface,
+    backgroundGradientFrom: colors.surface,
+    backgroundGradientTo: colors.surface,
     decimalPlaces: 1,
-    color: (opacity = 1) => `rgba(94, 221, 212, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    color: (opacity = 1) => isDark ? `rgba(52, 211, 153, ${opacity})` : `rgba(16, 185, 129, ${opacity})`,
+    labelColor: (opacity = 1) => isDark ? `rgba(255, 255, 255, ${opacity})` : `rgba(0, 0, 0, ${opacity})`,
     style: {
       borderRadius: 16,
     },
@@ -44,11 +46,11 @@ export default function ScreenTimeTracker({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
       <View style={styles.header}>
         <View style={styles.headerTitle}>
-          <Ionicons name="phone-portrait-outline" size={24} color={COLORS.mind} />
-          <Text style={styles.title}>Screen Time</Text>
+          <Ionicons name="phone-portrait-outline" size={24} color={colors.mind} />
+          <Text style={[styles.title, { color: colors.text }]}>Screen Time</Text>
         </View>
         <TouchableOpacity
           style={styles.syncButton}
@@ -58,7 +60,7 @@ export default function ScreenTimeTracker({
           <Ionicons
             name={isSyncing ? 'refresh-circle' : 'sync-outline'}
             size={20}
-            color={COLORS.mind}
+            color={colors.mind}
           />
         </TouchableOpacity>
       </View>
@@ -80,11 +82,11 @@ export default function ScreenTimeTracker({
       </View>
 
       <View style={styles.footer}>
-        <View style={styles.statBox}>
-          <Text style={styles.statLabel}>Daily Average</Text>
-          <Text style={styles.statValue}>{averageValue}h</Text>
+        <View style={[styles.statBox, { backgroundColor: isDark ? 'rgba(94, 221, 212, 0.1)' : 'rgba(13, 148, 136, 0.1)' }]}>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Daily Average</Text>
+          <Text style={[styles.statValue, { color: colors.mind }]}>{averageValue}h</Text>
         </View>
-        <Text style={styles.infoText}>
+        <Text style={[styles.infoText, { color: colors.textSecondary }]}>
           Insights integrated from mobile wellbeing.
         </Text>
       </View>
@@ -94,11 +96,9 @@ export default function ScreenTimeTracker({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.surface,
     padding: SPACING.lg,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: COLORS.surfaceLight,
     marginBottom: SPACING.lg,
   },
   header: {
@@ -114,7 +114,6 @@ const styles = StyleSheet.create({
   },
   title: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.text,
   },
   syncButton: {
     padding: SPACING.xs,
@@ -134,7 +133,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: SPACING.sm,
-    backgroundColor: 'rgba(94, 221, 212, 0.1)',
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.lg,
     borderRadius: BORDER_RADIUS.full,
@@ -142,15 +140,12 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     ...TYPOGRAPHY.small,
-    color: COLORS.textSecondary,
   },
   statValue: {
     ...TYPOGRAPHY.bodySemiBold,
-    color: COLORS.mind,
   },
   infoText: {
     ...TYPOGRAPHY.small,
-    color: COLORS.textMuted,
     textAlign: 'center',
   },
 });

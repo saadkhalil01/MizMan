@@ -1,9 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { COLORS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,13 +13,13 @@ interface ScreenBackgroundProps {
 
 const ScreenBackground: React.FC<ScreenBackgroundProps> = ({ children, style }) => {
     const insets = useSafeAreaInsets();
+    const { colors, isDark } = useTheme();
 
     return (
-        <View style={[styles.container, style]}>
-            <StatusBar style="light" />
+        <View style={[styles.container, { backgroundColor: colors.background }, style]}>
             {/* Base Gradient */}
             <LinearGradient
-                colors={COLORS.premiumGradient}
+                colors={colors.premiumGradient}
                 style={StyleSheet.absoluteFill}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -29,19 +28,19 @@ const ScreenBackground: React.FC<ScreenBackgroundProps> = ({ children, style }) 
             {/* Decorative Blobs for Depth */}
             <View style={styles.blobContainer}>
                 <LinearGradient
-                    colors={['rgba(253, 224, 71, 0.2)', 'transparent']}
+                    colors={isDark ? ['rgba(253, 224, 71, 0.2)', 'transparent'] : ['rgba(234, 179, 8, 0.1)', 'transparent']}
                     style={[styles.blob, styles.blobTopLeft]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                 />
                 <LinearGradient
-                    colors={['rgba(251, 191, 36, 0.15)', 'transparent']}
+                    colors={isDark ? ['rgba(251, 191, 36, 0.15)', 'transparent'] : ['rgba(245, 158, 11, 0.08)', 'transparent']}
                     style={[styles.blob, styles.blobBottomRight]}
                     start={{ x: 1, y: 1 }}
                     end={{ x: 0, y: 0 }}
                 />
                 <LinearGradient
-                    colors={['rgba(234, 179, 8, 0.18)', 'transparent']}
+                    colors={isDark ? ['rgba(234, 179, 8, 0.18)', 'transparent'] : ['rgba(251, 191, 36, 0.12)', 'transparent']}
                     style={[styles.blob, styles.blobCenter]}
                     start={{ x: 0.5, y: 0.5 }}
                     end={{ x: 0, y: 0 }}
@@ -59,7 +58,6 @@ const ScreenBackground: React.FC<ScreenBackgroundProps> = ({ children, style }) 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
     },
     content: {
         flex: 1,

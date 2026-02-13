@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateData } from 'react-native-calendars';
-import { COLORS, SPACING, TYPOGRAPHY } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 import ScreenBackground from '../../components/common/ScreenBackground';
 import TrackingCalendar from '../../components/common/TrackingCalendar';
@@ -11,6 +12,7 @@ import GymModal from '../../components/Body/GymModal';
 const GYM_DATA_KEY = '@mizman_gym_data';
 
 export default function BodyScreen() {
+    const { colors } = useTheme();
     const [gymData, setGymData] = useState<Record<string, { workoutDone: boolean }>>({});
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -59,7 +61,7 @@ export default function BodyScreen() {
         if (gymData[date].workoutDone) {
             acc[date] = {
                 marked: true,
-                dotColor: COLORS.body,
+                dotColor: colors.body,
             };
         }
         return acc;
@@ -69,26 +71,26 @@ export default function BodyScreen() {
         <ScreenBackground style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Body Module</Text>
-                    <Text style={styles.subtitle}>Fitness Tracker</Text>
+                    <Text style={[styles.title, { color: colors.text }]}>Body Module</Text>
+                    <Text style={[styles.subtitle, { color: colors.body }]}>Fitness Tracker</Text>
                 </View>
 
                 <View style={styles.calendarContainer}>
                     <TrackingCalendar 
                         markedDates={markedDates} 
                         onDayPress={handleDayPress} 
-                        accentColor={COLORS.body}
+                        accentColor={colors.body}
                     />
                 </View>
 
-                <View style={styles.infoSection}>
-                    <Text style={styles.description}>
+                <View style={[styles.infoSection, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
+                    <Text style={[styles.description, { color: colors.textSecondary }]}>
                         Maintain your workout consistency by marking your gym days.
                     </Text>
                     <View style={styles.legend}>
                         <View style={styles.legendItem}>
-                            <View style={[styles.dot, { backgroundColor: COLORS.body }]} />
-                            <Text style={styles.legendText}>Workout Completed</Text>
+                            <View style={[styles.dot, { backgroundColor: colors.body }]} />
+                            <Text style={[styles.legendText, { color: colors.text }]}>Workout Completed</Text>
                         </View>
                     </View>
                 </View>
@@ -111,19 +113,16 @@ const styles = StyleSheet.create({
     container: { flex: 1 },
     content: { padding: SPACING.lg },
     header: { marginBottom: SPACING.xl, alignItems: 'center' },
-    title: { ...TYPOGRAPHY.h1, color: COLORS.text, marginBottom: SPACING.xs },
-    subtitle: { ...TYPOGRAPHY.h3, color: COLORS.body },
+    title: { ...TYPOGRAPHY.h1, marginBottom: SPACING.xs },
+    subtitle: { ...TYPOGRAPHY.h3 },
     calendarContainer: { marginBottom: SPACING.xl },
     infoSection: {
-        backgroundColor: COLORS.surface,
         padding: SPACING.lg,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: COLORS.surfaceLight,
     },
     description: { 
         ...TYPOGRAPHY.caption, 
-        color: COLORS.textSecondary, 
         textAlign: 'center',
         marginBottom: SPACING.md,
     },
@@ -143,6 +142,5 @@ const styles = StyleSheet.create({
     },
     legendText: {
         ...TYPOGRAPHY.smallMedium,
-        color: COLORS.text,
     },
 });

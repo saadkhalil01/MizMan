@@ -9,11 +9,12 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { Brain, Dumbbell } from 'lucide-react-native';
-import { COLORS, SPACING, TYPOGRAPHY, SHADOWS, BORDER_RADIUS } from '../../constants/theme';
+import { Brain, Dumbbell, Moon, Sun } from 'lucide-react-native';
+import { SPACING, TYPOGRAPHY, SHADOWS, BORDER_RADIUS } from '../../constants/theme';
 import Svg, { Circle, G, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 import { LineChart, BarChart } from 'react-native-chart-kit';
 import ScreenBackground from '../../components/common/ScreenBackground';
+import { useTheme } from '../../context/ThemeContext';
 
 const { width } = Dimensions.get('window');
 
@@ -26,10 +27,11 @@ interface ModuleCardProps {
 }
 
 const ModuleCard: React.FC<ModuleCardProps> = ({ title, icon, score, color, onPress }) => {
+    const { colors } = useTheme();
     return (
-        <TouchableOpacity onPress={onPress} style={styles.moduleCard} activeOpacity={0.8}>
+        <TouchableOpacity onPress={onPress} style={[styles.moduleCard, { backgroundColor: colors.surface }]} activeOpacity={0.8}>
             <LinearGradient
-                colors={[COLORS.surface, COLORS.surfaceLight]}
+                colors={[colors.surface, colors.surfaceLight]}
                 style={styles.moduleGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -37,9 +39,9 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ title, icon, score, color, onPr
                 <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
                     {icon}
                 </View>
-                <Text style={styles.moduleTitle}>{title}</Text>
-                <Text style={styles.moduleScore}>{score}%</Text>
-                <View style={styles.progressBar}>
+                <Text style={[styles.moduleTitle, { color: colors.text }]}>{title}</Text>
+                <Text style={[styles.moduleScore, { color: colors.text }]}>{score}%</Text>
+                <View style={[styles.progressBar, { backgroundColor: colors.background }]}>
                     <View style={[styles.progressFill, { width: `${score}%`, backgroundColor: color }]} />
                 </View>
             </LinearGradient>
@@ -48,6 +50,7 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ title, icon, score, color, onPr
 };
 
 const MasterRing: React.FC<{ score: number; size?: number }> = ({ score, size = 220 }) => {
+    const { colors } = useTheme();
     const strokeWidth = size * 0.09;
     const radius = (size - strokeWidth) / 2;
     const circumference = radius * 2 * Math.PI;
@@ -58,9 +61,9 @@ const MasterRing: React.FC<{ score: number; size?: number }> = ({ score, size = 
             <Svg width={size} height={size}>
                 <Defs>
                     <SvgGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <Stop offset="0%" stopColor={COLORS.accentGradient[0]} />
-                        <Stop offset="50%" stopColor={COLORS.accentGradient[1]} />
-                        <Stop offset="100%" stopColor={COLORS.accentGradient[2]} />
+                        <Stop offset="0%" stopColor={colors.accentGradient[0]} />
+                        <Stop offset="50%" stopColor={colors.accentGradient[1]} />
+                        <Stop offset="100%" stopColor={colors.accentGradient[2]} />
                     </SvgGradient>
                 </Defs>
                 <G rotation="-90" origin={`${size / 2}, ${size / 2}`}>
@@ -69,7 +72,7 @@ const MasterRing: React.FC<{ score: number; size?: number }> = ({ score, size = 
                         cx={size / 2}
                         cy={size / 2}
                         r={radius}
-                        stroke={COLORS.surfaceLight}
+                        stroke={colors.surfaceLight}
                         strokeWidth={strokeWidth}
                         fill="none"
                         opacity={0.3}
@@ -89,7 +92,7 @@ const MasterRing: React.FC<{ score: number; size?: number }> = ({ score, size = 
                 </G>
             </Svg>
             <View style={styles.ringCenter}>
-                <Text style={[styles.ringScore, { fontSize: size * 0.25 }]}>{score}</Text>
+                <Text style={[styles.ringScore, { fontSize: size * 0.25, color: colors.text }]}>{score}</Text>
             </View>
         </View>
     );
@@ -97,13 +100,15 @@ const MasterRing: React.FC<{ score: number; size?: number }> = ({ score, size = 
 
 export default function DashboardScreen() {
     const insets = useSafeAreaInsets();
+    const { colors, toggleTheme, isDark } = useTheme();
+    
     // Mock data - will be replaced with actual data from context
     const masterScore = 85;
     const modules = [
-        { title: 'Spirit', icon: <Ionicons name="moon" size={24} color={COLORS.spirit} />, score: 90, color: COLORS.spirit },
-        { title: 'Body', icon: <Dumbbell size={24} color={COLORS.body} />, score: 75, color: COLORS.body },
-        { title: 'Mind', icon: <Brain size={24} color={COLORS.mind} />, score: 88, color: COLORS.mind },
-        { title: 'Wealth', icon: <MaterialIcons name="attach-money" size={24} color={COLORS.wealth} />, score: 82, color: COLORS.wealth },
+        { title: 'Spirit', icon: <Ionicons name="moon" size={24} color={isDark ? colors.spirit : '#854D0E'} />, score: 90, color: colors.spirit },
+        { title: 'Body', icon: <Dumbbell size={24} color={isDark ? colors.body : '#92400E'} />, score: 75, color: colors.body },
+        { title: 'Mind', icon: <Brain size={24} color={isDark ? colors.mind : '#0D9488'} />, score: 88, color: colors.mind },
+        { title: 'Wealth', icon: <MaterialIcons name="attach-money" size={24} color={isDark ? colors.wealth : '#B45309'} />, score: 82, color: colors.wealth },
     ];
 
     return (
@@ -118,8 +123,8 @@ export default function DashboardScreen() {
                 {/* Header */}
                 <View style={[styles.header, { paddingTop: insets.top + SPACING.md }]}>
                     <View>
-                        <Text style={styles.greeting}>Assalamu Alaikum</Text>
-                        <Text style={styles.date}>
+                        <Text style={[styles.greeting, { color: colors.text }]}>Assalamu Alaikum</Text>
+                        <Text style={[styles.date, { color: colors.textSecondary }]}>
                             {new Date().toLocaleDateString('en-US', {
                                 weekday: 'short',
                                 month: 'short',
@@ -127,9 +132,21 @@ export default function DashboardScreen() {
                             })}
                         </Text>
                     </View>
-                    <TouchableOpacity style={styles.notificationButton}>
-                        <Ionicons name="notifications-outline" size={22} color={COLORS.text} />
-                    </TouchableOpacity>
+                    <View style={styles.headerButtons}>
+                        <TouchableOpacity 
+                            style={[styles.notificationButton, { backgroundColor: colors.surface, marginRight: SPACING.sm }]}
+                            onPress={toggleTheme}
+                        >
+                            {isDark ? (
+                                <Ionicons name="sunny-outline" size={22} color={colors.text} />
+                            ) : (
+                                <Ionicons name="moon-outline" size={22} color={colors.text} />
+                            )}
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.notificationButton, { backgroundColor: colors.surface }]}>
+                            <Ionicons name="notifications-outline" size={22} color={colors.text} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {/* Overview Row: Ring + Streak */}
@@ -140,27 +157,27 @@ export default function DashboardScreen() {
                     <View style={styles.highlightsColumn}>
                         <TouchableOpacity style={styles.streakHighlight}>
                             <LinearGradient
-                                colors={COLORS.accentGradient}
+                                colors={colors.accentGradient}
                                 style={styles.streakGradientSmall}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
                             >
-                                <Ionicons name="flame" size={24} color={COLORS.text} />
+                                <Ionicons name="flame" size={24} color={isDark ? colors.text : '#FFFFFF'} />
                                 <View style={styles.streakInfoSmall}>
-                                    <Text style={styles.streakNumberSmall}>24</Text>
-                                    <Text style={styles.highlightsLabel}>Days</Text>
+                                    <Text style={[styles.streakNumberSmall, { color: isDark ? colors.text : '#FFFFFF' }]}>24</Text>
+                                    <Text style={[styles.highlightsLabel, { color: isDark ? colors.text : '#FFFFFF' }]}>Days</Text>
                                 </View>
                             </LinearGradient>
                         </TouchableOpacity>
 
-                        <View style={styles.dailyQuoteCard}>
+                        <View style={[styles.dailyQuoteCard, { backgroundColor: colors.surface, borderColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }]}>
                             <LinearGradient
-                                colors={[COLORS.surfaceLight, COLORS.surface]}
+                                colors={[colors.surfaceLight, colors.surface]}
                                 style={StyleSheet.absoluteFill}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
                             />
-                            <Text style={styles.quoteText}>"Balance is the key to MizMan."</Text>
+                            <Text style={[styles.quoteText, { color: colors.textSecondary }]}>"Balance is the key to MizMan."</Text>
                         </View>
                     </View>
                 </View>
@@ -168,8 +185,8 @@ export default function DashboardScreen() {
                 {/* Compact Charts Section */}
                 <View style={styles.chartsSection}>
                     {/* MizMan Index */}
-                    <View style={styles.chartCard}>
-                        <Text style={styles.chartTitleCompact}>MizMan Index</Text>
+                    <View style={[styles.chartCard, { backgroundColor: colors.surface, borderColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }]}>
+                        <Text style={[styles.chartTitleCompact, { color: colors.textSecondary }]}>MizMan Index</Text>
                         <LineChart
                             data={{
                                 labels: ["M", "T", "W", "T", "F", "S", "S"],
@@ -183,22 +200,22 @@ export default function DashboardScreen() {
                             xLabelsOffset={-5}
 
                             chartConfig={{
-                                backgroundColor: COLORS.surface,
-                                backgroundGradientFrom: COLORS.surface,
-                                backgroundGradientTo: COLORS.surfaceLight,
+                                backgroundColor: colors.surface,
+                                backgroundGradientFrom: colors.surface,
+                                backgroundGradientTo: colors.surface,
                                 decimalPlaces: 0,
-                                color: (opacity = 1) => `rgba(52, 211, 153, ${opacity})`, // COLORS.success
-                                labelColor: (opacity = 1) => `rgba(180, 198, 231, ${opacity})`, // COLORS.textSecondary
+                                color: (opacity = 1) => isDark ? `rgba(52, 211, 153, ${opacity})` : `rgba(16, 185, 129, ${opacity})`,
+                                labelColor: (opacity = 1) => isDark ? `rgba(180, 198, 231, ${opacity})` : `rgba(71, 85, 105, ${opacity})`,
                                 propsForDots: {
                                     r: "2",
                                     strokeWidth: "3",
-                                    stroke: COLORS.success
+                                    stroke: colors.success
                                 },
                                 propsForBackgroundLines: {
                                     strokeDasharray: "", // solid background lines
-                                    stroke: "rgba(255, 255, 255, 0.05)",
+                                    stroke: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
                                 },
-                                fillShadowGradient: COLORS.success,
+                                fillShadowGradient: colors.success,
                                 fillShadowGradientOpacity: 0.2,
                                 useShadowColorFromDataset: false,
                             }}
@@ -214,18 +231,18 @@ export default function DashboardScreen() {
                     </View>
 
                     {/* Pillar Balance */}
-                    <View style={styles.chartCard}>
-                        <Text style={styles.chartTitleCompact}>Pillar Balance</Text>
+                    <View style={[styles.chartCard, { backgroundColor: colors.surface, borderColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }]}>
+                        <Text style={[styles.chartTitleCompact, { color: colors.textSecondary }]}>Pillar Balance</Text>
                         <BarChart
                             data={{
                                 labels: ["S", "B", "M", "W"],
                                 datasets: [{
                                     data: [90, 75, 88, 82],
                                     colors: [
-                                        (opacity = 1) => `rgba(254, 249, 195, ${opacity})`, // spirit light yellow
-                                        (opacity = 1) => `rgba(253, 230, 138, ${opacity})`, // body soft yellow
-                                        (opacity = 1) => `rgba(94, 221, 212, ${opacity})`,
-                                        (opacity = 1) => `rgba(245, 158, 11, ${opacity})`, // wealth amber
+                                        (opacity = 1) => isDark ? `rgba(254, 249, 195, ${opacity})` : `rgba(133, 77, 14, ${opacity})`,
+                                        (opacity = 1) => isDark ? `rgba(253, 230, 138, ${opacity})` : `rgba(146, 64, 14, ${opacity})`,
+                                        (opacity = 1) => isDark ? `rgba(94, 221, 212, ${opacity})` : `rgba(13, 148, 136, ${opacity})`,
+                                        (opacity = 1) => isDark ? `rgba(245, 158, 11, ${opacity})` : `rgba(180, 83, 9, ${opacity})`,
                                     ]
                                 }]
                             }}
@@ -236,17 +253,17 @@ export default function DashboardScreen() {
                             yLabelsOffset={30}
                             xLabelsOffset={-5}
                             chartConfig={{
-                                backgroundColor: COLORS.surface,
-                                backgroundGradientFrom: COLORS.surface,
-                                backgroundGradientTo: COLORS.surfaceLight,
+                                backgroundColor: colors.surface,
+                                backgroundGradientFrom: colors.surface,
+                                backgroundGradientTo: colors.surface,
                                 decimalPlaces: 0,
-                                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                labelColor: (opacity = 1) => `rgba(180, 198, 231, ${opacity})`,
+                                color: (opacity = 1) => isDark ? `rgba(255, 255, 255, ${opacity})` : `rgba(15, 23, 42, ${opacity})`,
+                                labelColor: (opacity = 1) => isDark ? `rgba(180, 198, 231, ${opacity})` : `rgba(71, 85, 105, ${opacity})`,
                                 barPercentage: 1,
                                 barRadius: 5,
                                 propsForBackgroundLines: {
                                     strokeDasharray: "",
-                                    stroke: "rgba(255, 255, 255, 0.05)",
+                                    stroke: isDark ? "rgba(255, 255, 255, 0.05)" : "rgba(0, 0, 0, 0.05)",
                                 },
                             }}
                             style={styles.chartInner}
@@ -263,9 +280,9 @@ export default function DashboardScreen() {
                 {/* Module Cards */}
                 <View style={styles.modulesSectionCompact}>
                     <View style={styles.sectionHeader}>
-                        <Text style={styles.sectionTitleSmall}>Your Pillars</Text>
+                        <Text style={[styles.sectionTitleSmall, { color: colors.text }]}>Your Pillars</Text>
                         <TouchableOpacity>
-                            <Text style={styles.viewAllText}>View All</Text>
+                            <Text style={[styles.viewAllText, { color: colors.primary }]}>View All</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.modulesGrid}>
@@ -286,13 +303,13 @@ export default function DashboardScreen() {
                 <View style={[styles.quickActions, { marginBottom: SPACING.lg }]}>
                     <TouchableOpacity style={styles.actionButtonCompact}>
                         <LinearGradient
-                            colors={COLORS.accentGradient}
+                            colors={colors.accentGradient}
                             style={styles.actionGradientCompact}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                         >
-                            <Ionicons name="add" size={24} color={COLORS.text} />
-                            <Text style={styles.actionTextCompact}>Log Entry</Text>
+                            <Ionicons name="add" size={24} color={isDark ? colors.text : '#FFFFFF'} />
+                            <Text style={[styles.actionTextCompact, { color: isDark ? colors.text : '#FFFFFF' }]}>Log Entry</Text>
                         </LinearGradient>
                     </TouchableOpacity>
                 </View>
@@ -315,20 +332,21 @@ const styles = StyleSheet.create({
         paddingHorizontal: SPACING.lg,
         paddingBottom: SPACING.lg,
     },
+    headerButtons: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     greeting: {
         ...TYPOGRAPHY.h2,
-        color: COLORS.text,
     },
     date: {
         ...TYPOGRAPHY.caption,
-        color: COLORS.textSecondary,
         marginTop: SPACING.xs,
     },
     notificationButton: {
-        width: 48,
-        height: 48,
+        width: 44,
+        height: 44,
         borderRadius: BORDER_RADIUS.md,
-        backgroundColor: COLORS.surface,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -348,16 +366,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     ringScore: {
-        color: COLORS.text,
         fontFamily: 'Inter-SemiBold',
         fontWeight: '600',
     },
     ringLabel: {
         ...TYPOGRAPHY.caption,
-        color: COLORS.textSecondary,
         marginTop: SPACING.xs,
     },
-
     streakCard: {
         marginHorizontal: SPACING.lg,
         marginBottom: SPACING.xl,
@@ -376,11 +391,9 @@ const styles = StyleSheet.create({
     },
     streakNumber: {
         ...TYPOGRAPHY.h1,
-        color: COLORS.text,
     },
     streakLabel: {
         ...TYPOGRAPHY.caption,
-        color: COLORS.text,
         opacity: 0.8,
     },
     modulesSection: {
@@ -389,7 +402,6 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         ...TYPOGRAPHY.h3,
-        color: COLORS.text,
         marginBottom: SPACING.md,
     },
     modulesGrid: {
@@ -419,17 +431,14 @@ const styles = StyleSheet.create({
     },
     moduleTitle: {
         ...TYPOGRAPHY.body,
-        color: COLORS.text,
         marginBottom: SPACING.xs,
     },
     moduleScore: {
         ...TYPOGRAPHY.h2,
-        color: COLORS.text,
         marginBottom: SPACING.sm,
     },
     progressBar: {
         height: 6,
-        backgroundColor: COLORS.background,
         borderRadius: BORDER_RADIUS.sm,
         overflow: 'hidden',
     },
@@ -452,7 +461,6 @@ const styles = StyleSheet.create({
     },
     actionText: {
         ...TYPOGRAPHY.body,
-        color: COLORS.text,
         flex: 1,
         marginLeft: SPACING.md,
     },
@@ -464,7 +472,6 @@ const styles = StyleSheet.create({
         borderRadius: BORDER_RADIUS.lg,
         overflow: 'hidden',
         ...SHADOWS.medium,
-        backgroundColor: COLORS.surface,
     },
     overviewRow: {
         flexDirection: 'row',
@@ -500,24 +507,20 @@ const styles = StyleSheet.create({
     },
     streakNumberSmall: {
         ...TYPOGRAPHY.h2,
-        color: COLORS.text,
     },
     highlightsLabel: {
         ...TYPOGRAPHY.small,
-        color: COLORS.text,
         opacity: 0.8,
     },
     dailyQuoteCard: {
         padding: SPACING.md,
         borderRadius: BORDER_RADIUS.md,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.05)',
         overflow: 'hidden',
         position: 'relative',
     },
     quoteText: {
         ...TYPOGRAPHY.smallMedium,
-        color: COLORS.textSecondary,
         fontStyle: 'italic',
     },
     chartsSection: {
@@ -526,17 +529,14 @@ const styles = StyleSheet.create({
         marginBottom: SPACING.lg,
     },
     chartCard: {
-        backgroundColor: COLORS.surface,
         borderRadius: BORDER_RADIUS.lg,
         height: 240,
         borderWidth: 1,
-        borderColor: 'rgba(255, 255, 255, 0.05)',
         ...SHADOWS.small,
         justifyContent: 'center'
     },
     chartTitleCompact: {
         ...TYPOGRAPHY.h3,
-        color: COLORS.textSecondary,
         marginLeft: SPACING.sm + 10,
         marginBottom: SPACING.sm,
     },
@@ -556,11 +556,9 @@ const styles = StyleSheet.create({
     },
     sectionTitleSmall: {
         ...TYPOGRAPHY.h3,
-        color: COLORS.text,
     },
     viewAllText: {
         ...TYPOGRAPHY.smallMedium,
-        color: COLORS.primary,
     },
     actionButtonCompact: {
         borderRadius: BORDER_RADIUS.full,
@@ -577,6 +575,5 @@ const styles = StyleSheet.create({
     },
     actionTextCompact: {
         ...TYPOGRAPHY.bodyMedium,
-        color: COLORS.text,
     },
 });

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { COLORS, SPACING, TYPOGRAPHY } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 import ScreenBackground from '../../components/common/ScreenBackground';
 import StreakTracker from '../../components/Mind/StreakTracker';
@@ -12,6 +13,7 @@ const LONGEST_STREAK_KEY = '@mizman_longest_streak';
 const SCREEN_TIME_DATA_KEY = '@mizman_screen_time_data';
 
 export default function MindScreen() {
+    const { colors, isDark } = useTheme();
     const [streakStartDate, setStreakStartDate] = useState<number | null>(null);
     const [longestStreak, setLongestStreak] = useState(0);
     const [screenTimeData, setScreenTimeData] = useState<number[]>([]);
@@ -83,8 +85,8 @@ export default function MindScreen() {
         <ScreenBackground style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Mind Module</Text>
-                    <Text style={styles.subtitle}>Digital Wellbeing</Text>
+                    <Text style={[styles.title, { color: colors.text }]}>Mind Module</Text>
+                    <Text style={[styles.subtitle, { color: colors.mind }]}>Digital Wellbeing</Text>
                 </View>
 
                 <StreakTracker 
@@ -100,9 +102,9 @@ export default function MindScreen() {
                     isSyncing={isSyncing}
                 />
 
-                <View style={styles.infoBox}>
-                    <Text style={styles.infoTitle}>Why this matters?</Text>
-                    <Text style={styles.infoText}>
+                <View style={[styles.infoBox, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
+                    <Text style={[styles.infoTitle, { color: colors.mind }]}>Why this matters?</Text>
+                    <Text style={[styles.infoText, { color: colors.textSecondary }]}>
                         Consistency in your habits and mindful digital usage are key to a healthy mind. 
                         Track your progress and stay focused on what truly matters.
                     </Text>
@@ -116,24 +118,20 @@ const styles = StyleSheet.create({
     container: { flex: 1 },
     content: { padding: SPACING.lg },
     header: { marginBottom: SPACING.xl, alignItems: 'center' },
-    title: { ...TYPOGRAPHY.h1, color: COLORS.text, marginBottom: SPACING.xs },
-    subtitle: { ...TYPOGRAPHY.h3, color: COLORS.mind },
+    title: { ...TYPOGRAPHY.h1, marginBottom: SPACING.xs },
+    subtitle: { ...TYPOGRAPHY.h3 },
     infoBox: {
-        backgroundColor: COLORS.surface,
         padding: SPACING.lg,
         borderRadius: 24,
         borderWidth: 1,
-        borderColor: COLORS.surfaceLight,
         marginTop: SPACING.md,
     },
     infoTitle: {
         ...TYPOGRAPHY.bodySemiBold,
-        color: COLORS.mind,
         marginBottom: SPACING.xs,
     },
     infoText: {
         ...TYPOGRAPHY.small,
-        color: COLORS.textSecondary,
         lineHeight: 20,
     },
 });

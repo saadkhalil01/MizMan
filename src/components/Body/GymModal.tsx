@@ -8,7 +8,8 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 interface GymModalProps {
   isVisible: boolean;
@@ -25,6 +26,7 @@ export default function GymModal({
   onClose,
   onSave,
 }: GymModalProps) {
+  const { colors } = useTheme();
   const [workoutDone, setWorkoutDone] = useState(false);
 
   useEffect(() => {
@@ -44,36 +46,37 @@ export default function GymModal({
       onRequestClose={onClose}
     >
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.modalContainer}>
+        <View style={[styles.modalContainer, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
           <View style={styles.header}>
-            <Text style={styles.title}>Workout tracking</Text>
-            <Text style={styles.dateText}>{date}</Text>
+            <Text style={[styles.title, { color: colors.textSecondary }]}>Workout tracking</Text>
+            <Text style={[styles.dateText, { color: colors.body }]}>{date}</Text>
           </View>
 
           <TouchableOpacity
-            style={styles.checkItem}
+            style={[styles.checkItem, { backgroundColor: colors.surfaceLight }]}
             onPress={() => setWorkoutDone(!workoutDone)}
             activeOpacity={0.7}
           >
-            <Text style={styles.checkText}>Did you hit the Gym?</Text>
+            <Text style={[styles.checkText, { color: colors.text }]}>Did you hit the Gym?</Text>
             <View
               style={[
                 styles.checkbox,
-                workoutDone && styles.checkboxChecked,
+                { borderColor: colors.body },
+                workoutDone && { backgroundColor: colors.body },
               ]}
             >
               {workoutDone && (
-                <Ionicons name="checkmark" size={16} color={COLORS.background} />
+                <Ionicons name="checkmark" size={16} color={colors.background} />
               )}
             </View>
           </TouchableOpacity>
 
           <View style={styles.footer}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Save</Text>
+            <TouchableOpacity style={[styles.saveButton, { backgroundColor: colors.body }]} onPress={handleSave}>
+              <Text style={[styles.saveButtonText, { color: colors.background }]}>Save</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -91,23 +94,19 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: '85%',
-    backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.lg,
     borderWidth: 1,
-    borderColor: COLORS.surfaceLight,
   },
   header: {
     marginBottom: SPACING.lg,
   },
   title: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.textSecondary,
     marginBottom: SPACING.xs,
   },
   dateText: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.body,
   },
   checkItem: {
     flexDirection: 'row',
@@ -115,25 +114,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.xl,
     paddingHorizontal: SPACING.md,
-    backgroundColor: COLORS.surfaceLight,
     borderRadius: BORDER_RADIUS.md,
     marginBottom: SPACING.xl,
   },
   checkText: {
     ...TYPOGRAPHY.bodySemiBold,
-    color: COLORS.text,
   },
   checkbox: {
     width: 28,
     height: 28,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: COLORS.body,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: COLORS.body,
   },
   footer: {
     flexDirection: 'row',
@@ -146,16 +139,13 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     ...TYPOGRAPHY.bodyMedium,
-    color: COLORS.textSecondary,
   },
   saveButton: {
-    backgroundColor: COLORS.body,
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.lg,
     borderRadius: BORDER_RADIUS.sm,
   },
   saveButtonText: {
     ...TYPOGRAPHY.bodySemiBold,
-    color: COLORS.background,
   },
 });

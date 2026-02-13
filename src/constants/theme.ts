@@ -1,40 +1,101 @@
-export const COLORS = {
-  // Primary Palette - Vibrant, Lighter Colors
-  primary: '#FDE047',      // Bright Yellow
-  secondary: '#FBBF24',    // Warm Yellow
-  accent: '#EAB308',       // Gold
+export const DARK_COLORS = {
+  // Primary Palette - Vibrant
+  primary: '#FDE047',
+  secondary: '#FBBF24',
+  accent: '#EAB308',
 
   // Module Colors
-  spirit: '#FEF9C3',       // Very Light Yellow
-  body: '#FDE68A',         // Soft Yellow
-  mind: '#5EDDD4',         // Keeping Teal for contrast or should I change it too? 
-  // User only said dashboard theme, so I'll keep mind/wealth for now but adjust if needed.
+  spirit: '#FEF9C3',
+  body: '#FDE68A',
+  mind: '#5EDDD4',
+  wealth: '#F59E0B',
 
-  wealth: '#F59E0B',       // Deep Gold / Amber
-
-  // Backgrounds - Lighter
-  background: '#0F1629',   // Lighter Navy
-  surface: '#1A2038',      // Lighter Surface
-  surfaceLight: '#252D4A', // Even Lighter Surface
+  // Backgrounds - Dark
+  background: '#0F1629',
+  surface: '#1A2038',
+  surfaceLight: '#252D4A',
 
   // Text
   text: '#FFFFFF',
-  textSecondary: '#B4C6E7', // Lighter Slate
-  textMuted: '#8B9DC3',    // Lighter Muted
+  textSecondary: '#B4C6E7',
+  textMuted: '#8B9DC3',
 
   // Status
-  success: '#34D399',      // Lighter Green
-  warning: '#FBBF24',      // Lighter Warning
-  error: '#F87171',        // Lighter Red
+  success: '#34D399',
+  warning: '#FBBF24',
+  error: '#F87171',
 
-  // Premium Gradients - Lighter
+  // Premium Gradients
   premiumGradient: ['#0F1629', '#1A2545', '#0F1629'] as const,
-  accentGradient: ['#FDE047', '#FBBF24', '#F59E0B'] as const, // Yellow -> Gold -> Amber
+  accentGradient: ['#FDE047', '#FBBF24', '#F59E0B'] as const,
   spiritGradient: ['#FEF9C3', '#FDE047'] as const,
   bodyGradient: ['#FDE68A', '#FBBF24'] as const,
   mindGradient: ['#5FE3D4', '#2DD4BF'] as const,
   wealthGradient: ['#FBBF24', '#F59E0B'] as const,
 };
+
+export const LIGHT_COLORS = {
+  // Primary Palette - Vibrant, slightly Adjusted for Light Mode
+  primary: '#EAB308',      // Gold (more visible on white)
+  secondary: '#F59E0B',    // Amber
+  accent: '#D97706',       // Deep Amber
+
+  // Module Colors
+  spirit: '#854D0E',       // Darker Gold for text
+  body: '#92400E',         // Brownish Amber
+  mind: '#0D9488',         // Dark Teal
+  wealth: '#B45309',       // Golden Brown
+
+  // Backgrounds - Light
+  background: '#F8FAFC',   // Very Light Slate
+  surface: '#FFFFFF',      // White
+  surfaceLight: '#F1F5F9', // Light Slate
+
+  // Text
+  text: '#0F172A',         // Slate 900
+  textSecondary: '#475569', // Slate 600
+  textMuted: '#94A3B8',    // Slate 400
+
+  // Status
+  success: '#10B981',      // Emerald 500
+  warning: '#F59E0B',      // Amber 500
+  error: '#EF4444',        // Red 500
+
+  // Premium Gradients - Lighter versions
+  premiumGradient: ['#F8FAFC', '#F1F5F9', '#F8FAFC'] as const,
+  accentGradient: ['#FEF08A', '#FDE047', '#FBBF24'] as const,
+  spiritGradient: ['#FEF9C3', '#FEF08A'] as const,
+  bodyGradient: ['#FEF08A', '#FDE68A'] as const,
+  mindGradient: ['#CCFBF1', '#99F6E4'] as const,
+  wealthGradient: ['#FEF3C7', '#FDE68A'] as const,
+};
+
+export type ThemeColors = {
+  primary: string;
+  secondary: string;
+  accent: string;
+  spirit: string;
+  body: string;
+  mind: string;
+  wealth: string;
+  background: string;
+  surface: string;
+  surfaceLight: string;
+  text: string;
+  textSecondary: string;
+  textMuted: string;
+  success: string;
+  warning: string;
+  error: string;
+  premiumGradient: readonly [string, string, ...string[]];
+  accentGradient: readonly [string, string, ...string[]];
+  spiritGradient: readonly [string, string, ...string[]];
+  bodyGradient: readonly [string, string, ...string[]];
+  mindGradient: readonly [string, string, ...string[]];
+  wealthGradient: readonly [string, string, ...string[]];
+};
+
+export const COLORS = DARK_COLORS as ThemeColors;
 
 export const SPACING = {
   xs: 4,

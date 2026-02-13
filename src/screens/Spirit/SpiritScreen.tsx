@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { DateData } from 'react-native-calendars';
-import { COLORS, SPACING, TYPOGRAPHY } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 import ScreenBackground from '../../components/common/ScreenBackground';
 import TrackingCalendar from '../../components/common/TrackingCalendar';
@@ -11,6 +12,7 @@ import PrayerModal from '../../components/Spirit/PrayerModal';
 const PRAYER_DATA_KEY = '@mizman_prayer_data';
 
 export default function SpiritScreen() {
+    const { colors, isDark } = useTheme();
     const [prayerData, setPrayerData] = useState<Record<string, Record<string, any>>>({});
     const [selectedDate, setSelectedDate] = useState<string | null>(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -100,7 +102,7 @@ export default function SpiritScreen() {
         if (someDone) {
             acc[date] = {
                 marked: true,
-                dotColor: allDone ? COLORS.success : COLORS.spirit,
+                dotColor: allDone ? colors.success : colors.spirit,
             };
         }
         return acc;
@@ -110,8 +112,8 @@ export default function SpiritScreen() {
         <ScreenBackground style={styles.container}>
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Spirit Module</Text>
-                    <Text style={styles.subtitle}>{preferredReligion} Tracking</Text>
+                    <Text style={[styles.title, { color: colors.text }]}>Spirit Module</Text>
+                    <Text style={[styles.subtitle, { color: colors.spirit }]}>{preferredReligion} Tracking</Text>
                 </View>
 
                 <View style={styles.calendarContainer}>
@@ -121,18 +123,18 @@ export default function SpiritScreen() {
                     />
                 </View>
 
-                <View style={styles.infoSection}>
-                    <Text style={styles.description}>
+                <View style={[styles.infoSection, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
+                    <Text style={[styles.description, { color: colors.textSecondary }]}>
                         Track your daily spiritual activities by selecting a date.
                     </Text>
                     <View style={styles.legend}>
                         <View style={styles.legendItem}>
-                            <View style={[styles.dot, { backgroundColor: COLORS.spirit }]} />
-                            <Text style={styles.legendText}>Some activities marked</Text>
+                            <View style={[styles.dot, { backgroundColor: colors.spirit }]} />
+                            <Text style={[styles.legendText, { color: colors.textSecondary }]}>Some activities marked</Text>
                         </View>
                         <View style={styles.legendItem}>
-                            <View style={[styles.dot, { backgroundColor: COLORS.success }]} />
-                            <Text style={styles.legendText}>All activities completed</Text>
+                            <View style={[styles.dot, { backgroundColor: colors.success }]} />
+                            <Text style={[styles.legendText, { color: colors.textSecondary }]}>All activities completed</Text>
                         </View>
                     </View>
                 </View>
@@ -156,19 +158,16 @@ const styles = StyleSheet.create({
     container: { flex: 1 },
     content: { padding: SPACING.lg },
     header: { marginBottom: SPACING.xl, alignItems: 'center' },
-    title: { ...TYPOGRAPHY.h1, color: COLORS.text, marginBottom: SPACING.xs },
-    subtitle: { ...TYPOGRAPHY.h3, color: COLORS.spirit },
+    title: { ...TYPOGRAPHY.h1, marginBottom: SPACING.xs },
+    subtitle: { ...TYPOGRAPHY.h3 },
     calendarContainer: { marginBottom: SPACING.xl },
     infoSection: {
-        backgroundColor: COLORS.surface,
         padding: SPACING.lg,
         borderRadius: 16,
         borderWidth: 1,
-        borderColor: COLORS.surfaceLight,
     },
     description: { 
         ...TYPOGRAPHY.caption, 
-        color: COLORS.textSecondary, 
         textAlign: 'center',
         marginBottom: SPACING.md,
     },
@@ -188,6 +187,5 @@ const styles = StyleSheet.create({
     },
     legendText: {
         ...TYPOGRAPHY.small,
-        color: COLORS.textSecondary,
     },
 });

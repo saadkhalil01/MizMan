@@ -10,7 +10,8 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS, SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 export const ASSET_CATEGORIES = [
   { id: 'stock', label: 'Stock', icon: 'trending-up', provider: 'MaterialIcons' },
@@ -46,6 +47,7 @@ export default function AssetModal({
   onSave,
   onDelete,
 }: AssetModalProps) {
+  const { colors, isDark } = useTheme();
   const [selectedTypeId, setSelectedTypeId] = useState<string>(ASSET_CATEGORIES[0].id);
   const [amount, setAmount] = useState('');
 
@@ -69,7 +71,7 @@ export default function AssetModal({
     onClose();
   };
 
-  const renderIcon = (category: typeof ASSET_CATEGORIES[number], size = 20, color = COLORS.text) => {
+  const renderIcon = (category: typeof ASSET_CATEGORIES[number], size = 20, color = colors.text) => {
     if (category.provider === 'MaterialCommunityIcons') {
       return <MaterialCommunityIcons name={category.icon as any} size={size} color={color} />;
     }
@@ -84,31 +86,33 @@ export default function AssetModal({
       onRequestClose={onClose}
     >
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.modalContainer} onStartShouldSetResponder={() => true}>
+        <View style={[styles.modalContainer, { backgroundColor: colors.surface }]} onStartShouldSetResponder={() => true}>
           <View style={styles.header}>
-            <Text style={styles.title}>{editingAsset ? 'Edit Asset' : 'Add Asset'}</Text>
+            <Text style={[styles.title, { color: colors.text }]}>{editingAsset ? 'Edit Asset' : 'Add Asset'}</Text>
             <TouchableOpacity onPress={onClose}>
-              <Ionicons name="close" size={24} color={COLORS.textSecondary} />
+              <Ionicons name="close" size={24} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
 
           <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-            <Text style={styles.label}>Category</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>Category</Text>
             <View style={styles.categoryGrid}>
               {ASSET_CATEGORIES.map((cat) => (
                 <TouchableOpacity
                   key={cat.id}
                   style={[
                     styles.categoryItem,
-                    selectedTypeId === cat.id && styles.categoryItemActive,
+                    { backgroundColor: colors.surfaceLight },
+                    selectedTypeId === cat.id && { backgroundColor: colors.wealth, borderColor: colors.wealth },
                   ]}
                   onPress={() => setSelectedTypeId(cat.id)}
                 >
-                  {renderIcon(cat, 24, selectedTypeId === cat.id ? COLORS.background : COLORS.wealth)}
+                  {renderIcon(cat, 24, selectedTypeId === cat.id ? colors.background : colors.wealth)}
                   <Text
                     style={[
                       styles.categoryLabel,
-                      selectedTypeId === cat.id && styles.categoryLabelActive,
+                      { color: colors.textSecondary },
+                      selectedTypeId === cat.id && { color: colors.background, fontWeight: '600' },
                     ]}
                     numberOfLines={1}
                   >
@@ -118,15 +122,15 @@ export default function AssetModal({
               ))}
             </View>
 
-            <Text style={styles.label}>Amount</Text>
-            <View style={styles.inputContainer}>
-              <Text style={styles.currencyPrefix}>$</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>Amount</Text>
+            <View style={[styles.inputContainer, { backgroundColor: colors.surfaceLight }]}>
+              <Text style={[styles.currencyPrefix, { color: colors.wealth }]}>$</Text>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text }]}
                 value={amount}
                 onChangeText={setAmount}
                 placeholder="0.00"
-                placeholderTextColor={COLORS.textMuted}
+                placeholderTextColor={colors.textSecondary}
                 keyboardType="numeric"
                 autoFocus={!editingAsset}
               />
@@ -142,11 +146,11 @@ export default function AssetModal({
                   onClose();
                 }}
               >
-                <Ionicons name="trash-outline" size={20} color={COLORS.error} />
+                <Ionicons name="trash-outline" size={20} color={colors.error} />
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Save Details</Text>
+            <TouchableOpacity style={[styles.saveButton, { backgroundColor: colors.wealth }]} onPress={handleSave}>
+              <Text style={[styles.saveButtonText, { color: colors.background }]}>Save Details</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -162,7 +166,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContainer: {
-    backgroundColor: COLORS.surface,
     borderTopLeftRadius: BORDER_RADIUS.xl,
     borderTopRightRadius: BORDER_RADIUS.xl,
     padding: SPACING.lg,
@@ -176,14 +179,12 @@ const styles = StyleSheet.create({
   },
   title: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.text,
   },
   scrollContent: {
     marginBottom: SPACING.lg,
   },
   label: {
     ...TYPOGRAPHY.smallMedium,
-    color: COLORS.textSecondary,
     marginBottom: SPACING.sm,
     marginTop: SPACING.md,
   },
@@ -194,45 +195,32 @@ const styles = StyleSheet.create({
   },
   categoryItem: {
     width: '48%',
-    backgroundColor: COLORS.surfaceLight,
     padding: SPACING.md,
     borderRadius: BORDER_RADIUS.md,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: 'transparent',
   },
-  categoryItemActive: {
-    backgroundColor: COLORS.wealth,
-    borderColor: COLORS.wealth,
-  },
   categoryLabel: {
     ...TYPOGRAPHY.small,
-    color: COLORS.textSecondary,
     marginTop: SPACING.xs,
     textAlign: 'center',
-  },
-  categoryLabelActive: {
-    color: COLORS.background,
-    fontWeight: '600',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.surfaceLight,
     borderRadius: BORDER_RADIUS.md,
     paddingHorizontal: SPACING.md,
     marginTop: SPACING.xs,
   },
   currencyPrefix: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.wealth,
     marginRight: SPACING.xs,
   },
   input: {
     flex: 1,
     height: 56,
     ...TYPOGRAPHY.h2,
-    color: COLORS.text,
   },
   footer: {
     flexDirection: 'row',
@@ -249,7 +237,6 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     flex: 1,
-    backgroundColor: COLORS.wealth,
     height: 56,
     borderRadius: BORDER_RADIUS.md,
     justifyContent: 'center',
@@ -257,6 +244,5 @@ const styles = StyleSheet.create({
   },
   saveButtonText: {
     ...TYPOGRAPHY.bodySemiBold,
-    color: COLORS.background,
   },
 });

@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 interface StreakTrackerProps {
   currentStreak: number;
@@ -14,6 +15,8 @@ export default function StreakTracker({
   longestStreak,
   onRelapse,
 }: StreakTrackerProps) {
+  const { colors, isDark } = useTheme();
+
   const handleRelapsePress = () => {
     Alert.alert(
       'Confirm Reset',
@@ -26,28 +29,31 @@ export default function StreakTracker({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
       <View style={styles.header}>
-        <Ionicons name="flame" size={24} color={COLORS.error} />
-        <Text style={styles.title}>NoFap Streak</Text>
+        <Ionicons name="flame" size={24} color={colors.error} />
+        <Text style={[styles.title, { color: colors.text }]}>NoFap Streak</Text>
       </View>
 
       <View style={styles.streakContainer}>
-        <View style={styles.circle}>
-          <Text style={styles.streakNumber}>{currentStreak}</Text>
-          <Text style={styles.streakLabel}>Days</Text>
+        <View style={[styles.circle, { borderColor: colors.mind, backgroundColor: isDark ? 'rgba(94, 221, 212, 0.1)' : 'rgba(13, 148, 136, 0.1)' }]}>
+          <Text style={[styles.streakNumber, { color: colors.mind }]}>{currentStreak}</Text>
+          <Text style={[styles.streakLabel, { color: colors.textSecondary }]}>Days</Text>
         </View>
       </View>
 
-      <View style={styles.statsContainer}>
+      <View style={[styles.statsContainer, { borderColor: colors.surfaceLight }]}>
         <View style={styles.statItem}>
-          <Text style={styles.statLabel}>Longest Streak</Text>
-          <Text style={styles.statValue}>{longestStreak} days</Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Longest Streak</Text>
+          <Text style={[styles.statValue, { color: colors.text }]}>{longestStreak} days</Text>
         </View>
       </View>
 
-      <TouchableOpacity style={styles.relapseButton} onPress={handleRelapsePress}>
-        <Text style={styles.relapseButtonText}>I relapsed</Text>
+      <TouchableOpacity 
+        style={[styles.relapseButton, { backgroundColor: isDark ? 'rgba(248, 113, 113, 0.1)' : 'rgba(239, 68, 68, 0.05)' }]} 
+        onPress={handleRelapsePress}
+      >
+        <Text style={[styles.relapseButtonText, { color: colors.error }]}>I relapsed</Text>
       </TouchableOpacity>
     </View>
   );
@@ -55,11 +61,9 @@ export default function StreakTracker({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.surface,
     padding: SPACING.lg,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: COLORS.surfaceLight,
     alignItems: 'center',
     marginBottom: SPACING.lg,
   },
@@ -71,7 +75,6 @@ const styles = StyleSheet.create({
   },
   title: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.text,
   },
   streakContainer: {
     marginBottom: SPACING.xl,
@@ -81,19 +84,15 @@ const styles = StyleSheet.create({
     height: 140,
     borderRadius: 70,
     borderWidth: 4,
-    borderColor: COLORS.mind,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(94, 221, 212, 0.1)',
   },
   streakNumber: {
     ...TYPOGRAPHY.h1,
     fontSize: 48,
-    color: COLORS.mind,
   },
   streakLabel: {
     ...TYPOGRAPHY.smallMedium,
-    color: COLORS.textSecondary,
     marginTop: -SPACING.xs,
   },
   statsContainer: {
@@ -101,7 +100,6 @@ const styles = StyleSheet.create({
     paddingVertical: SPACING.md,
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: COLORS.surfaceLight,
     marginBottom: SPACING.xl,
   },
   statItem: {
@@ -111,22 +109,18 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textSecondary,
   },
   statValue: {
     ...TYPOGRAPHY.bodySemiBold,
-    color: COLORS.text,
   },
   relapseButton: {
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.xl,
     borderRadius: BORDER_RADIUS.md,
-    backgroundColor: 'rgba(248, 113, 113, 0.1)',
     width: '100%',
     alignItems: 'center',
   },
   relapseButtonText: {
     ...TYPOGRAPHY.bodyMedium,
-    color: COLORS.error,
   },
 });

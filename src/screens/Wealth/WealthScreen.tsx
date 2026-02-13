@@ -9,7 +9,8 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-import { COLORS, SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { useTheme } from '../../context/ThemeContext';
 
 import ScreenBackground from '../../components/common/ScreenBackground';
 import AssetModal, { Asset, ASSET_CATEGORIES } from '../../components/Wealth/AssetModal';
@@ -18,6 +19,7 @@ import NetWorthPieChart from '../../components/Wealth/NetWorthPieChart';
 const WEALTH_DATA_KEY = '@mizman_wealth_data';
 
 export default function WealthScreen() {
+  const { colors, isDark } = useTheme();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
@@ -78,24 +80,24 @@ export default function WealthScreen() {
     <ScreenBackground style={styles.container}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.title}>Wealth Module</Text>
-          <Text style={styles.subtitle}>Net Worth Tracker</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Wealth Module</Text>
+          <Text style={[styles.subtitle, { color: colors.wealth }]}>Net Worth Tracker</Text>
         </View>
         <TouchableOpacity
-          style={styles.addButton}
+          style={[styles.addButton, { backgroundColor: colors.wealth }]}
           onPress={() => {
             setEditingAsset(null);
             setIsModalVisible(true);
           }}
         >
-          <Ionicons name="add" size={28} color={COLORS.background} />
+          <Ionicons name="add" size={28} color={isDark ? colors.background : '#FFFFFF'} />
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryLabel}>Total Net Worth</Text>
-          <Text style={styles.summaryValue}>{formatCurrency(totalNetWorth)}</Text>
+        <View style={[styles.summaryCard, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
+          <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Total Net Worth</Text>
+          <Text style={[styles.summaryValue, { color: colors.text }]}>{formatCurrency(totalNetWorth)}</Text>
         </View>
 
         {assets.length > 0 ? (
@@ -103,25 +105,25 @@ export default function WealthScreen() {
             <NetWorthPieChart assets={assets} />
             
             <View style={styles.assetList}>
-              <Text style={styles.sectionTitle}>Your Assets</Text>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Your Assets</Text>
               {assets.map((asset) => {
                 const category = ASSET_CATEGORIES.find((c) => c.id === asset.typeId);
                 return (
                   <TouchableOpacity
                     key={asset.id}
-                    style={styles.assetItem}
+                    style={[styles.assetItem, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}
                     onPress={() => {
                       setEditingAsset(asset);
                       setIsModalVisible(true);
                     }}
                   >
                     <View style={styles.assetInfo}>
-                      <View style={styles.assetIconContainer}>
-                         <MaterialIcons name="attach-money" size={20} color={COLORS.wealth} />
+                      <View style={[styles.assetIconContainer, { backgroundColor: colors.surfaceLight }]}>
+                         <MaterialIcons name="attach-money" size={20} color={colors.wealth} />
                       </View>
-                      <Text style={styles.assetLabel}>{category?.label}</Text>
+                      <Text style={[styles.assetLabel, { color: colors.text }]}>{category?.label}</Text>
                     </View>
-                    <Text style={styles.assetAmount}>{formatCurrency(asset.amount)}</Text>
+                    <Text style={[styles.assetAmount, { color: colors.wealth }]}>{formatCurrency(asset.amount)}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -129,13 +131,13 @@ export default function WealthScreen() {
           </>
         ) : (
           <View style={styles.emptyState}>
-            <MaterialIcons name="account-balance-wallet" size={64} color={COLORS.surfaceLight} />
-            <Text style={styles.emptyText}>No assets added yet</Text>
+            <MaterialIcons name="account-balance-wallet" size={64} color={colors.surfaceLight} />
+            <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No assets added yet</Text>
             <TouchableOpacity 
-              style={styles.emptyButton}
+              style={[styles.emptyButton, { backgroundColor: colors.surfaceLight }]}
               onPress={() => setIsModalVisible(true)}
             >
-              <Text style={styles.emptyButtonText}>Add your first asset</Text>
+              <Text style={[styles.emptyButtonText, { color: colors.wealth }]}>Add your first asset</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -161,39 +163,33 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.md,
   },
-  title: { ...TYPOGRAPHY.h2, color: COLORS.text },
-  subtitle: { ...TYPOGRAPHY.smallMedium, color: COLORS.wealth },
+  title: { ...TYPOGRAPHY.h2 },
+  subtitle: { ...TYPOGRAPHY.smallMedium },
   addButton: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: COLORS.wealth,
     justifyContent: 'center',
     alignItems: 'center',
   },
   content: { padding: SPACING.lg },
   summaryCard: {
-    backgroundColor: COLORS.surface,
     padding: SPACING.xl,
     borderRadius: 24,
     alignItems: 'center',
     marginBottom: SPACING.lg,
     borderWidth: 1,
-    borderColor: COLORS.surfaceLight,
   },
   summaryLabel: {
     ...TYPOGRAPHY.smallMedium,
-    color: COLORS.textSecondary,
     marginBottom: SPACING.xs,
   },
   summaryValue: {
     ...TYPOGRAPHY.h1,
-    color: COLORS.text,
     fontSize: 28,
   },
   sectionTitle: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.text,
     marginBottom: SPACING.md,
     marginTop: SPACING.md,
   },
@@ -204,12 +200,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: COLORS.surface,
     padding: SPACING.md,
     borderRadius: 16,
     marginBottom: SPACING.sm,
     borderWidth: 1,
-    borderColor: COLORS.surfaceLight,
   },
   assetInfo: {
     flexDirection: 'row',
@@ -220,17 +214,14 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: COLORS.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   assetLabel: {
     ...TYPOGRAPHY.bodyMedium,
-    color: COLORS.text,
   },
   assetAmount: {
     ...TYPOGRAPHY.bodySemiBold,
-    color: COLORS.wealth,
   },
   emptyState: {
     alignItems: 'center',
@@ -239,18 +230,15 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...TYPOGRAPHY.body,
-    color: COLORS.textSecondary,
     marginTop: SPACING.md,
     marginBottom: SPACING.xl,
   },
   emptyButton: {
-    backgroundColor: COLORS.surfaceLight,
     paddingVertical: SPACING.md,
     paddingHorizontal: SPACING.xl,
     borderRadius: BORDER_RADIUS.md,
   },
   emptyButtonText: {
     ...TYPOGRAPHY.bodyMedium,
-    color: COLORS.wealth,
   },
 });

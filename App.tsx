@@ -1,11 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, ActivityIndicator } from 'react-native';
 import * as Font from 'expo-font';
 import TabNavigator from './src/navigation/TabNavigator';
-import { COLORS } from './src/constants/theme';
+import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+
+function MainApp() {
+  const { colors, isDark } = useTheme();
+
+  return (
+    <NavigationContainer
+      theme={{
+        dark: isDark,
+        colors: {
+          primary: colors.primary,
+          background: colors.background,
+          card: colors.surface,
+          text: colors.text,
+          border: colors.surfaceLight,
+          notification: colors.primary,
+        },
+        fonts: {
+          regular: {
+            fontFamily: 'Inter-Regular',
+            fontWeight: '400',
+          },
+          medium: {
+            fontFamily: 'Inter-Medium',
+            fontWeight: '500',
+          },
+          bold: {
+            fontFamily: 'Inter-SemiBold',
+            fontWeight: '600',
+          },
+          heavy: {
+            fontFamily: 'Inter-SemiBold',
+            fontWeight: '600',
+          },
+        },
+      }}
+    >
+      <StatusBar style={isDark ? 'light' : 'dark'} />
+      <TabNavigator />
+    </NavigationContainer>
+  );
+}
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -24,48 +65,17 @@ export default function App() {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, backgroundColor: COLORS.background, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
+      <View style={{ flex: 1, backgroundColor: '#0F1629', justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#FDE047" />
       </View>
     );
   }
 
   return (
     <SafeAreaProvider>
-      <NavigationContainer
-        theme={{
-          dark: true,
-          colors: {
-            primary: COLORS.primary,
-            background: COLORS.background,
-            card: COLORS.surface,
-            text: COLORS.text,
-            border: COLORS.surfaceLight,
-            notification: COLORS.primary,
-          },
-          fonts: {
-            regular: {
-              fontFamily: 'Inter-Regular',
-              fontWeight: '400',
-            },
-            medium: {
-              fontFamily: 'Inter-Medium',
-              fontWeight: '500',
-            },
-            bold: {
-              fontFamily: 'Inter-SemiBold',
-              fontWeight: '600',
-            },
-            heavy: {
-              fontFamily: 'Inter-SemiBold',
-              fontWeight: '600',
-            },
-          },
-        }}
-      >
-        <StatusBar style="light" />
-        <TabNavigator />
-      </NavigationContainer>
+      <ThemeProvider>
+        <MainApp />
+      </ThemeProvider>
     </SafeAreaProvider>
   );
 }

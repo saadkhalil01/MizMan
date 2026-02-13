@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import {
-  COLORS,
   SPACING,
   TYPOGRAPHY,
   BORDER_RADIUS,
 } from "../../constants/theme";
+import { useTheme } from "../../context/ThemeContext";
 
 type Religion = 'Muslim' | 'Christian' | 'Hinduism';
 
@@ -40,6 +40,7 @@ export default function PrayerModal({
   onSave,
   initialReligion = 'Muslim',
 }: PrayerModalProps) {
+  const { colors, isDark } = useTheme();
   const [selectedReligion, setSelectedReligion] = useState<Religion>(initialReligion);
   const [prayers, setPrayers] = useState<Record<string, boolean>>({});
 
@@ -73,26 +74,27 @@ export default function PrayerModal({
       onRequestClose={onClose}
     >
       <Pressable style={styles.overlay} onPress={onClose}>
-        <View style={styles.modalContainer}>
+        <View style={[styles.modalContainer, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
           <View style={styles.header}>
-            <Text style={styles.title}>Spiritual Tracking for</Text>
-            <Text style={styles.dateText}>{date}</Text>
+            <Text style={[styles.title, { color: colors.textSecondary }]}>Spiritual Tracking for</Text>
+            <Text style={[styles.dateText, { color: colors.spirit }]}>{date}</Text>
           </View>
 
-          <View style={styles.religionSelector}>
+          <View style={[styles.religionSelector, { backgroundColor: colors.surfaceLight }]}>
             {(Object.keys(RELIGION_DATA) as Religion[]).map((religion) => (
               <TouchableOpacity
                 key={religion}
                 style={[
                   styles.religionButton,
-                  selectedReligion === religion && styles.religionButtonActive,
+                  selectedReligion === religion && [styles.religionButtonActive, { backgroundColor: colors.surface }],
                 ]}
                 onPress={() => setSelectedReligion(religion)}
               >
                 <Text
                   style={[
                     styles.religionButtonText,
-                    selectedReligion === religion && styles.religionButtonTextActive,
+                    { color: colors.textSecondary },
+                    selectedReligion === religion && { color: colors.spirit, ...TYPOGRAPHY.smallBold },
                   ]}
                 >
                   {religion}
@@ -105,22 +107,23 @@ export default function PrayerModal({
             {RELIGION_DATA[selectedReligion].map((prayer) => (
               <TouchableOpacity
                 key={prayer}
-                style={styles.prayerItem}
+                style={[styles.prayerItem, { borderBottomColor: colors.surfaceLight }]}
                 onPress={() => togglePrayer(prayer)}
                 activeOpacity={0.7}
               >
-                <Text style={styles.prayerName}>{prayer}</Text>
+                <Text style={[styles.prayerName, { color: colors.text }]}>{prayer}</Text>
                 <View
                   style={[
                     styles.checkbox,
-                    prayers[prayer] && styles.checkboxChecked,
+                    { borderColor: colors.spirit },
+                    prayers[prayer] && { backgroundColor: colors.spirit },
                   ]}
                 >
                   {prayers[prayer] && (
                     <Ionicons
                       name="checkmark"
                       size={16}
-                      color={COLORS.background}
+                      color={colors.background}
                     />
                   )}
                 </View>
@@ -130,10 +133,10 @@ export default function PrayerModal({
 
           <View style={styles.footer}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={[styles.cancelButtonText, { color: colors.textSecondary }]}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Save Updates</Text>
+            <TouchableOpacity style={[styles.saveButton, { backgroundColor: colors.spirit }]} onPress={handleSave}>
+              <Text style={[styles.saveButtonText, { color: colors.background }]}>Save Updates</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -151,27 +154,22 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     width: "85%",
-    backgroundColor: COLORS.surface,
     borderRadius: BORDER_RADIUS.lg,
     padding: SPACING.lg,
     borderWidth: 1,
-    borderColor: COLORS.surfaceLight,
   },
   header: {
     marginBottom: SPACING.lg,
   },
   title: {
     ...TYPOGRAPHY.h3,
-    color: COLORS.textSecondary,
     marginBottom: SPACING.xs,
   },
   dateText: {
     ...TYPOGRAPHY.h2,
-    color: COLORS.spirit,
   },
   religionSelector: {
     flexDirection: 'row',
-    backgroundColor: COLORS.surfaceLight,
     borderRadius: BORDER_RADIUS.md,
     padding: 4,
     marginBottom: SPACING.lg,
@@ -183,7 +181,6 @@ const styles = StyleSheet.create({
     borderRadius: BORDER_RADIUS.sm,
   },
   religionButtonActive: {
-    backgroundColor: COLORS.surface,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -192,11 +189,6 @@ const styles = StyleSheet.create({
   },
   religionButtonText: {
     ...TYPOGRAPHY.smallMedium,
-    color: COLORS.textSecondary,
-  },
-  religionButtonTextActive: {
-    color: COLORS.spirit,
-    ...TYPOGRAPHY.smallBold,
   },
   prayerList: {
     marginBottom: SPACING.xl,
@@ -207,23 +199,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: SPACING.md,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.surfaceLight,
   },
   prayerName: {
     ...TYPOGRAPHY.body,
-    color: COLORS.text,
   },
   checkbox: {
     width: 24,
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: COLORS.spirit,
     justifyContent: "center",
     alignItems: "center",
-  },
-  checkboxChecked: {
-    backgroundColor: COLORS.spirit,
   },
   footer: {
     flexDirection: "row",
@@ -236,16 +222,13 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     ...TYPOGRAPHY.bodyMedium,
-    color: COLORS.textSecondary,
   },
   saveButton: {
-    backgroundColor: COLORS.spirit,
     paddingVertical: SPACING.sm,
     paddingHorizontal: SPACING.lg,
     borderRadius: BORDER_RADIUS.sm,
   },
   saveButtonText: {
     ...TYPOGRAPHY.bodySemiBold,
-    color: COLORS.background,
   },
 });
