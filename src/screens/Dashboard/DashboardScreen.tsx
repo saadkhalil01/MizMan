@@ -160,16 +160,16 @@ export default function DashboardScreen() {
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 1 }}
                             />
-                            <Text style={styles.quoteText}>"Balance is the key to Mizaan."</Text>
+                            <Text style={styles.quoteText}>"Balance is the key to MizMan."</Text>
                         </View>
                     </View>
                 </View>
 
                 {/* Compact Charts Section */}
                 <View style={styles.chartsSection}>
-                    {/* Mizaan Index */}
+                    {/* MizMan Index */}
                     <View style={styles.chartCard}>
-                        <Text style={styles.chartTitleCompact}>Mizaan Index</Text>
+                        <Text style={styles.chartTitleCompact}>MizMan Index</Text>
                         <LineChart
                             data={{
                                 labels: ["M", "T", "W", "T", "F", "S", "S"],

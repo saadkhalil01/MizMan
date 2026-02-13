@@ -45,7 +45,7 @@ Most habit trackers are fragmented. You need 5 different apps to track Namaz, Gy
 ## 📂 Project Structure
 
 ```
-mizman-app/
+mizman/
 ├── src/
 │   ├── screens/
 │   │   ├── Dashboard/      # Master dashboard with ring progress
@@ -124,6 +124,7 @@ Each pillar contributes equally to create a balanced life score.
 ## 🗺️ Roadmap
 
 ### Phase 1 (Current)
+
 - [x] Project setup with Expo
 - [x] Navigation structure
 - [x] Master Dashboard UI
@@ -132,18 +133,21 @@ Each pillar contributes equally to create a balanced life score.
 - [ ] Body module implementation
 
 ### Phase 2
+
 - [ ] Mind module with screen time integration
 - [ ] Wealth module with investment tracking
 - [ ] Analytics with charts and heatmaps
 - [ ] Data persistence with AsyncStorage
 
 ### Phase 3
+
 - [ ] Streak recovery system
 - [ ] Weekly/Monthly PDF reports
 - [ ] Progressive theme evolution (Bronze → Gold)
 - [ ] Push notifications for reminders
 
 ### Phase 4
+
 - [ ] Cloud sync (optional)
 - [ ] Social features (leaderboards)
 - [ ] Advanced analytics
@@ -153,7 +157,7 @@ Each pillar contributes equally to create a balanced life score.
 
 ## 📱 Screenshots
 
-*(Coming soon)*
+_(Coming soon)_
 
 ---
 

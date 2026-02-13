@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Dimensions, ViewStyle } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { COLORS } from '../../constants/theme';
 
 const { width, height } = Dimensions.get('window');
@@ -12,6 +13,8 @@ interface ScreenBackgroundProps {
 }
 
 const ScreenBackground: React.FC<ScreenBackgroundProps> = ({ children, style }) => {
+    const insets = useSafeAreaInsets();
+
     return (
         <View style={[styles.container, style]}>
             <StatusBar style="light" />
@@ -46,7 +49,7 @@ const ScreenBackground: React.FC<ScreenBackgroundProps> = ({ children, style }) 
             </View>
 
             {/* Main Content */}
-            <View style={styles.content}>
+            <View style={[styles.content, { paddingTop: insets.top }]}>
                 {children}
             </View>
         </View>
