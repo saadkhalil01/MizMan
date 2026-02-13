@@ -15,15 +15,22 @@ import {
   BORDER_RADIUS,
 } from "../../constants/theme";
 
+type Religion = 'Muslim' | 'Christian' | 'Hinduism';
+
 interface PrayerModalProps {
   isVisible: boolean;
   date: string;
   initialState: Record<string, boolean>;
   onClose: () => void;
-  onSave: (prayers: Record<string, boolean>) => void;
+  onSave: (prayers: Record<string, boolean>, religion: Religion) => void;
+  initialReligion?: Religion;
 }
 
-const PRAYERS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
+const RELIGION_DATA: Record<Religion, string[]> = {
+  Muslim: ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"],
+  Christian: ["Morning Prayer", "Bible Reading", "Grace before Meals", "Evening Prayer", "Meditation"],
+  Hinduism: ["Puja", "Meditation", "Shlokas", "Bhajan", "Aarti"],
+};
 
 export default function PrayerModal({
   isVisible,
@@ -31,21 +38,20 @@ export default function PrayerModal({
   initialState,
   onClose,
   onSave,
+  initialReligion = 'Muslim',
 }: PrayerModalProps) {
+  const [selectedReligion, setSelectedReligion] = useState<Religion>(initialReligion);
   const [prayers, setPrayers] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
-    // Initialize prayers state when modal becomes visible or initialState changes
-    const initial = {
-      Fajr: false,
-      Dhuhr: false,
-      Asr: false,
-      Maghrib: false,
-      Isha: false,
-      ...initialState,
-    };
+    // Initialize prayers state when modal becomes visible or religion changes
+    const items = RELIGION_DATA[selectedReligion];
+    const initial: Record<string, boolean> = {};
+    items.forEach(item => {
+      initial[item] = initialState[item] || false;
+    });
     setPrayers(initial);
-  }, [isVisible, initialState]);
+  }, [isVisible, selectedReligion, initialState]);
 
   const togglePrayer = (prayer: string) => {
     setPrayers((prev) => ({
@@ -55,7 +61,7 @@ export default function PrayerModal({
   };
 
   const handleSave = () => {
-    onSave(prayers);
+    onSave(prayers, selectedReligion);
     onClose();
   };
 
@@ -69,12 +75,34 @@ export default function PrayerModal({
       <Pressable style={styles.overlay} onPress={onClose}>
         <View style={styles.modalContainer}>
           <View style={styles.header}>
-            <Text style={styles.title}>Prayers for</Text>
+            <Text style={styles.title}>Spiritual Tracking for</Text>
             <Text style={styles.dateText}>{date}</Text>
           </View>
 
+          <View style={styles.religionSelector}>
+            {(Object.keys(RELIGION_DATA) as Religion[]).map((religion) => (
+              <TouchableOpacity
+                key={religion}
+                style={[
+                  styles.religionButton,
+                  selectedReligion === religion && styles.religionButtonActive,
+                ]}
+                onPress={() => setSelectedReligion(religion)}
+              >
+                <Text
+                  style={[
+                    styles.religionButtonText,
+                    selectedReligion === religion && styles.religionButtonTextActive,
+                  ]}
+                >
+                  {religion}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
           <View style={styles.prayerList}>
-            {PRAYERS.map((prayer) => (
+            {RELIGION_DATA[selectedReligion].map((prayer) => (
               <TouchableOpacity
                 key={prayer}
                 style={styles.prayerItem}
@@ -105,7 +133,7 @@ export default function PrayerModal({
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-              <Text style={styles.saveButtonText}>Save</Text>
+              <Text style={styles.saveButtonText}>Save Updates</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -140,6 +168,35 @@ const styles = StyleSheet.create({
   dateText: {
     ...TYPOGRAPHY.h2,
     color: COLORS.spirit,
+  },
+  religionSelector: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.surfaceLight,
+    borderRadius: BORDER_RADIUS.md,
+    padding: 4,
+    marginBottom: SPACING.lg,
+  },
+  religionButton: {
+    flex: 1,
+    paddingVertical: SPACING.sm,
+    alignItems: 'center',
+    borderRadius: BORDER_RADIUS.sm,
+  },
+  religionButtonActive: {
+    backgroundColor: COLORS.surface,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  religionButtonText: {
+    ...TYPOGRAPHY.smallMedium,
+    color: COLORS.textSecondary,
+  },
+  religionButtonTextActive: {
+    color: COLORS.spirit,
+    ...TYPOGRAPHY.smallBold,
   },
   prayerList: {
     marginBottom: SPACING.xl,

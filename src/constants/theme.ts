@@ -106,6 +106,12 @@ export const TYPOGRAPHY = {
     lineHeight: 18,
     fontFamily: 'Inter-Medium',
   },
+  smallBold: {
+    fontSize: 12,
+    fontWeight: '700' as const,
+    lineHeight: 18,
+    fontFamily: 'Inter-SemiBold',
+  },
 };
 
 export const SHADOWS = {
