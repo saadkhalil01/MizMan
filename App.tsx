@@ -6,6 +6,7 @@ import { View, ActivityIndicator } from 'react-native';
 import * as Font from 'expo-font';
 import TabNavigator from './src/navigation/TabNavigator';
 import { ThemeProvider, useTheme } from './src/context/ThemeContext';
+import { SettingsProvider } from './src/context/SettingsContext';
 
 function MainApp() {
   const { colors, isDark } = useTheme();
@@ -73,9 +74,11 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <ThemeProvider>
-        <MainApp />
-      </ThemeProvider>
+      <SettingsProvider>
+        <ThemeProvider>
+          <MainApp />
+        </ThemeProvider>
+      </SettingsProvider>
     </SafeAreaProvider>
   );
 }

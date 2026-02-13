@@ -28,6 +28,13 @@ export default function ScreenTimeTracker({
     datasets: [
       {
         data: data.length > 0 ? data : [0, 0, 0, 0, 0, 0, 0],
+        colors: data.map((value) => 
+          (opacity = 1) => value > 6 
+            ? `rgba(248, 113, 113, ${opacity})` // Red for dangerous usage
+            : isDark 
+              ? `rgba(52, 211, 153, ${opacity})` 
+              : `rgba(16, 185, 129, ${opacity})`
+        ),
       },
     ],
   };
@@ -44,6 +51,8 @@ export default function ScreenTimeTracker({
     },
     barPercentage: 0.6,
   };
+
+  const hasDangerousUsage = data.some(val => val > 6);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
@@ -77,11 +86,18 @@ export default function ScreenTimeTracker({
           fromZero
           showBarTops={false}
           withInnerLines={false}
+          withCustomBarColorFromData={true}
+          flatColor={true}
           style={styles.chart}
         />
       </View>
 
       <View style={styles.footer}>
+        {hasDangerousUsage && (
+          <Text style={[styles.warningText, { color: colors.error }]}>
+            Usage above 6h is considered dangerous!
+          </Text>
+        )}
         <View style={[styles.statBox, { backgroundColor: isDark ? 'rgba(94, 221, 212, 0.1)' : 'rgba(13, 148, 136, 0.1)' }]}>
           <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Daily Average</Text>
           <Text style={[styles.statValue, { color: colors.mind }]}>{averageValue}h</Text>
@@ -146,6 +162,11 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...TYPOGRAPHY.small,
+    textAlign: 'center',
+  },
+  warningText: {
+    ...TYPOGRAPHY.smallBold,
+    marginBottom: SPACING.md,
     textAlign: 'center',
   },
 });

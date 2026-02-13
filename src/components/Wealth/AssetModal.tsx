@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { SPACING, TYPOGRAPHY, BORDER_RADIUS, CATEGORY_COLORS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 
 export const ASSET_CATEGORIES = [
@@ -20,7 +20,7 @@ export const ASSET_CATEGORIES = [
   { id: 'gold', label: 'Gold', icon: 'gold', provider: 'MaterialCommunityIcons' },
   { id: 'silver', label: 'Silver', icon: 'diamond-stone', provider: 'MaterialCommunityIcons' },
   { id: 'bonds', label: 'Bonds', icon: 'file-document-outline', provider: 'MaterialCommunityIcons' },
-  { id: 'money_market', label: 'Money Market Funds', icon: 'bank', provider: 'MaterialCommunityIcons' },
+  { id: 'money_market', label: 'Liquid Funds', icon: 'bank', provider: 'MaterialCommunityIcons' },
   { id: 'options', label: 'FnO Futures & Options', icon: 'chart-bell-curve-cumulative', provider: 'MaterialCommunityIcons' },
   { id: 'pension_fund', label: 'Pension Fund', icon: 'piggy-bank-outline', provider: 'MaterialCommunityIcons' },
   { id: 'equity_funds', label: 'Equity Funds', icon: 'chart-line', provider: 'MaterialCommunityIcons' },
@@ -100,7 +100,7 @@ export default function AssetModal({
             <Text style={[styles.label, { color: colors.textSecondary }]}>Category</Text>
             <View style={styles.categoryGrid}>
               {ASSET_CATEGORIES.map((cat) => {
-                const catColor = CATEGORY_COLORS[cat.id] || colors.wealth;
+                const catColor = colors.asset[cat.id] || colors.wealth;
                 const isSelected = selectedTypeId === cat.id;
                 
                 return (
@@ -116,7 +116,7 @@ export default function AssetModal({
                     ]}
                     onPress={() => setSelectedTypeId(cat.id)}
                   >
-                    {renderIcon(cat, 24, isSelected ? catColor : colors.wealth)}
+                    {renderIcon(cat, 24, isSelected ? (colors.assetIcon[cat.id] || catColor) : colors.wealth)}
                     <Text
                       style={[
                         styles.categoryLabel,

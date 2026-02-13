@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
     View,
     Text,
@@ -15,6 +16,7 @@ import Svg, { Circle, G, Defs, LinearGradient as SvgGradient, Stop } from 'react
 import { LineChart, BarChart } from 'react-native-chart-kit';
 import ScreenBackground from '../../components/common/ScreenBackground';
 import { useTheme } from '../../context/ThemeContext';
+import NationalityModal from '../../components/common/NationalityModal';
 
 const { width } = Dimensions.get('window');
 
@@ -101,6 +103,7 @@ const MasterRing: React.FC<{ score: number; size?: number }> = ({ score, size = 
 export default function DashboardScreen() {
     const insets = useSafeAreaInsets();
     const { colors, toggleTheme, isDark } = useTheme();
+    const [isNationalityModalVisible, setIsNationalityModalVisible] = useState(false);
     
     // Mock data - will be replaced with actual data from context
     const masterScore = 85;
@@ -121,7 +124,7 @@ export default function DashboardScreen() {
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
-                <View style={[styles.header, { paddingTop: insets.top + SPACING.xs }]}>
+                <View style={[styles.header, { paddingTop: insets.top }]}>
                     <View>
                         <Text style={[styles.greeting, { color: colors.text }]}>Assalamu Alaikum</Text>
                         <Text style={[styles.date, { color: colors.textSecondary }]}>
@@ -133,6 +136,12 @@ export default function DashboardScreen() {
                         </Text>
                     </View>
                     <View style={styles.headerButtons}>
+                        <TouchableOpacity 
+                            style={[styles.notificationButton, { backgroundColor: colors.surface, marginRight: SPACING.sm }]}
+                            onPress={() => setIsNationalityModalVisible(true)}
+                        >
+                            <Ionicons name="flag-outline" size={22} color={colors.text} />
+                        </TouchableOpacity>
                         <TouchableOpacity 
                             style={[styles.notificationButton, { backgroundColor: colors.surface, marginRight: SPACING.sm }]}
                             onPress={toggleTheme}
@@ -148,6 +157,11 @@ export default function DashboardScreen() {
                         </TouchableOpacity>
                     </View>
                 </View>
+
+                <NationalityModal 
+                    isVisible={isNationalityModalVisible} 
+                    onClose={() => setIsNationalityModalVisible(false)} 
+                />
 
                 {/* Overview Row: Ring + Streak */}
                 <View style={styles.overviewRow}>

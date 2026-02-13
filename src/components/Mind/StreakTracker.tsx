@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   streakNumber: {
-    ...TYPOGRAPHY.h1,
     fontSize: 48,
   },
   streakLabel: {

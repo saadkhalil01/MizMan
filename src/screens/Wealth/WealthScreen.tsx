@@ -9,8 +9,9 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SPACING, TYPOGRAPHY, BORDER_RADIUS, CATEGORY_COLORS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
+import { useSettings, NATIONALITIES } from '../../context/SettingsContext';
 
 import ScreenBackground from '../../components/common/ScreenBackground';
 import AssetModal, { Asset, ASSET_CATEGORIES } from '../../components/Wealth/AssetModal';
@@ -19,24 +20,44 @@ import NetWorthPieChart from '../../components/Wealth/NetWorthPieChart';
 const WEALTH_DATA_KEY = '@mizman_wealth_data';
 const CURRENCY_KEY = '@mizman_currency_preference';
 
-const CURRENCIES = [
-  { code: 'USD', symbol: '$', label: 'USD', locale: 'en-US' },
-  { code: 'PKR', symbol: 'PKR', label: 'PKR', locale: 'en-PK' },
-  { code: 'INR', symbol: '₹', label: 'INR', locale: 'en-IN' },
-  { code: 'AED', symbol: 'د.إ', label: 'AED', locale: 'ar-AE' },
-];
+// Mock Exchange Rates (Base: USD)
+const EXCHANGE_RATES: Record<string, number> = {
+  USD: 1,
+  PKR: 280,
+  INR: 83,
+  AED: 3.67,
+};
 
 export default function WealthScreen() {
   const { colors, isDark } = useTheme();
+  const { nationality } = useSettings();
   const insets = useSafeAreaInsets();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingAsset, setEditingAsset] = useState<Asset | null>(null);
-  const [selectedCurrency, setSelectedCurrency] = useState(CURRENCIES[0]);
+  
+  // Find current nationality details
+  const currentNat = NATIONALITIES.find(n => n.value === nationality) || NATIONALITIES[2]; // Default to USA
+  const [selectedCurrency, setSelectedCurrency] = useState({ 
+    code: currentNat.currency, 
+    symbol: currentNat.symbol, 
+    label: currentNat.currency, 
+    locale: 'en-US' 
+  });
+
+  useEffect(() => {
+    // When nationality changes, update the selected currency to the nationality's base currency
+    const nat = NATIONALITIES.find(n => n.value === nationality) || NATIONALITIES[2];
+    setSelectedCurrency({ 
+      code: nat.currency, 
+      symbol: nat.symbol, 
+      label: nat.currency, 
+      locale: 'en-US' 
+    });
+  }, [nationality]);
 
   useEffect(() => {
     loadWealthData();
-    loadCurrencyPreference();
   }, []);
 
   const loadWealthData = async () => {
@@ -50,37 +71,12 @@ export default function WealthScreen() {
     }
   };
 
-  const loadCurrencyPreference = async () => {
-    try {
-      const storedCurrency = await AsyncStorage.getItem(CURRENCY_KEY);
-      if (storedCurrency) {
-        const found = CURRENCIES.find(c => c.code === storedCurrency);
-        if (found) setSelectedCurrency(found);
-      }
-    } catch (error) {
-      console.error('Error loading currency preference:', error);
-    }
-  };
-
   const saveWealthData = async (newAssets: Asset[]) => {
     try {
       await AsyncStorage.setItem(WEALTH_DATA_KEY, JSON.stringify(newAssets));
     } catch (error) {
       console.error('Error saving wealth data:', error);
     }
-  };
-
-  const saveCurrencyPreference = async (currencyCode: string) => {
-    try {
-      await AsyncStorage.setItem(CURRENCY_KEY, currencyCode);
-    } catch (error) {
-      console.error('Error saving currency preference:', error);
-    }
-  };
-
-  const handleCurrencyChange = (currency: typeof CURRENCIES[0]) => {
-    setSelectedCurrency(currency);
-    saveCurrencyPreference(currency.code);
   };
 
   const handleSaveAsset = (asset: Asset) => {
@@ -104,13 +100,27 @@ export default function WealthScreen() {
 
   const totalNetWorth = assets.reduce((sum, a) => sum + a.amount, 0);
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat(selectedCurrency.locale, {
-      style: 'currency',
-      currency: selectedCurrency.code,
+  const formatCurrency = (amount: number, code: string, symbol: string) => {
+    return `${symbol}${new Intl.NumberFormat('en-US', {
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(amount)}`;
   };
+
+  // Conversion Logic
+  const getConvertedValues = () => {
+    const baseCode = selectedCurrency.code;
+    const amountInUSD = totalNetWorth / EXCHANGE_RATES[baseCode];
+    
+    return NATIONALITIES
+      .filter(n => n.currency !== baseCode)
+      .map(n => ({
+        code: n.currency,
+        symbol: n.symbol,
+        amount: amountInUSD * EXCHANGE_RATES[n.currency]
+      }));
+  };
+
+  const conversions = getConvertedValues();
 
   return (
     <ScreenBackground style={styles.container}>
@@ -125,7 +135,7 @@ export default function WealthScreen() {
         <View style={styles.header}>
           <View>
             <Text style={[styles.title, { color: colors.text }]}>Wealth Module</Text>
-            <Text style={[styles.subtitle, { color: colors.wealth }]}>Net Worth Tracker</Text>
+            <Text style={[styles.subtitle, { color: colors.wealth }]}>Net Worth ({nationality})</Text>
           </View>
           <TouchableOpacity
             style={[styles.addButton, { backgroundColor: colors.wealth }]}
@@ -140,31 +150,18 @@ export default function WealthScreen() {
 
         <View style={[styles.summaryCard, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}>
           <Text style={[styles.summaryLabel, { color: colors.textSecondary }]}>Total Net Worth</Text>
-          <Text style={[styles.summaryValue, { color: colors.text }]}>{formatCurrency(totalNetWorth)}</Text>
+          <Text style={[styles.summaryValue, { color: colors.text }]}>
+            {formatCurrency(totalNetWorth, selectedCurrency.code, selectedCurrency.symbol)}
+          </Text>
           
-          <View style={[styles.currencyPicker, { backgroundColor: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)' }]}>
-            {CURRENCIES.map((curr) => (
-              <TouchableOpacity
-                key={curr.code}
-                style={[
-                  styles.currencyButton,
-                  selectedCurrency.code === curr.code && { backgroundColor: colors.wealth }
-                ]}
-                onPress={() => handleCurrencyChange(curr)}
-              >
-                <Text 
-                  style={[
-                    styles.currencyButtonText, 
-                    { 
-                      color: selectedCurrency.code === curr.code 
-                        ? (isDark ? colors.background : '#FFFFFF') 
-                        : colors.textSecondary 
-                    }
-                  ]}
-                >
-                  {curr.label}
+          <View style={styles.conversionsContainer}>
+            {conversions.map((conv) => (
+              <View key={conv.code} style={styles.conversionItem}>
+                <Text style={[styles.conversionCode, { color: colors.textMuted }]}>{conv.code}: </Text>
+                <Text style={[styles.conversionValue, { color: colors.textSecondary }]}>
+                  {formatCurrency(conv.amount, conv.code, conv.symbol)}
                 </Text>
-              </TouchableOpacity>
+              </View>
             ))}
           </View>
         </View>
@@ -175,6 +172,7 @@ export default function WealthScreen() {
             
             <View style={styles.assetList}>
               <Text style={[styles.sectionTitle, { color: colors.text }]}>Your Assets</Text>
+
               {assets.map((asset) => {
                 const category = ASSET_CATEGORIES.find((c) => c.id === asset.typeId);
                 
@@ -183,17 +181,18 @@ export default function WealthScreen() {
                   
                   const iconName = (category as any).icon;
                   const provider = (category as any).provider;
+                  const iconColor = colors.assetIcon[category.id] || colors.wealth;
 
                   if (provider === 'MaterialCommunityIcons') {
-                    return <MaterialCommunityIcons name={iconName} size={20} color={colors.wealth} />;
+                    return <MaterialCommunityIcons name={iconName} size={20} color={iconColor} />;
                   }
                   if (provider === 'MaterialIcons') {
-                    return <MaterialIcons name={iconName} size={20} color={colors.wealth} />;
+                    return <MaterialIcons name={iconName} size={20} color={iconColor} />;
                   }
-                  return <Ionicons name={iconName} size={20} color={colors.wealth} />;
+                  return <Ionicons name={iconName} size={20} color={iconColor} />;
                 };
 
-                const cardBgColor = category ? (CATEGORY_COLORS[category.id] || colors.wealth) : colors.wealth;
+                const cardBgColor = category ? (colors.asset[category.id] || colors.wealth) : colors.wealth;
                 
                 return (
                   <TouchableOpacity
@@ -216,7 +215,9 @@ export default function WealthScreen() {
                       </View>
                       <Text style={[styles.assetLabel, { color: colors.text }]}>{category?.label}</Text>
                     </View>
-                    <Text style={[styles.assetAmount, { color: colors.wealth }]}>{formatCurrency(asset.amount)}</Text>
+                    <Text style={[styles.assetAmount, { color: colors.wealth }]}>
+                      {formatCurrency(asset.amount, selectedCurrency.code, selectedCurrency.symbol)}
+                    </Text>
                   </TouchableOpacity>
                 );
               })}
@@ -283,20 +284,24 @@ const styles = StyleSheet.create({
     ...TYPOGRAPHY.h1,
     fontSize: 28,
   },
-  currencyPicker: {
+  conversionsContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: SPACING.md,
     marginTop: SPACING.md,
-    gap: SPACING.xs,
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
-    padding: 4,
-    borderRadius: BORDER_RADIUS.md,
+    paddingTop: SPACING.sm,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.05)',
   },
-  currencyButton: {
-    paddingHorizontal: SPACING.sm,
-    paddingVertical: 4,
-    borderRadius: BORDER_RADIUS.sm,
+  conversionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  currencyButtonText: {
+  conversionCode: {
+    ...TYPOGRAPHY.smallBold,
+  },
+  conversionValue: {
     ...TYPOGRAPHY.smallMedium,
   },
   sectionTitle: {

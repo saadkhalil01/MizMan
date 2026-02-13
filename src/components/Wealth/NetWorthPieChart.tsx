@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
-import { COLORS, TYPOGRAPHY, CATEGORY_COLORS } from '../../constants/theme';
+import { COLORS, TYPOGRAPHY } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 import { Asset, ASSET_CATEGORIES } from './AssetModal';
 
@@ -13,6 +13,7 @@ interface NetWorthPieChartProps {
 
 export default function NetWorthPieChart({ assets }: NetWorthPieChartProps) {
   const { colors } = useTheme();
+  
   // Aggregate assets by type
   const aggregatedData = ASSET_CATEGORIES.map((cat) => {
     const total = assets
@@ -22,7 +23,7 @@ export default function NetWorthPieChart({ assets }: NetWorthPieChartProps) {
     return {
       name: cat.label,
       value: total,
-      color: CATEGORY_COLORS[cat.id] || colors.spirit,
+      color: colors.asset[cat.id] || colors.spirit,
       legendFontColor: colors.textSecondary,
       legendFontSize: 12,
     };
@@ -42,29 +43,21 @@ export default function NetWorthPieChart({ assets }: NetWorthPieChartProps) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.chartWrapper}>
-        <PieChart
-          data={aggregatedData}
-          width={CHART_WIDTH}
-          height={220}
-          chartConfig={chartConfig}
-          accessor="value"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          center={[10, 0]}
-          absolute
-          hasLegend={false}
-        />
-      </View>
-      <View style={styles.legendContainer}>
-        {aggregatedData.map((item, index) => (
-          <View key={index} style={styles.legendItem}>
-            <View style={[styles.colorIndicator, { backgroundColor: item.color }]} />
-            <Text style={[styles.legendText, { color: colors.textSecondary }]}>
-              {item.name}
-            </Text>
-          </View>
-        ))}
+      <View style={styles.contentContainer}>
+        <View style={styles.chartWrapper}>
+          <PieChart
+            data={aggregatedData}
+            width={CHART_WIDTH}
+            height={200}
+            chartConfig={chartConfig}
+            accessor="value"
+            backgroundColor="transparent"
+            paddingLeft="0"
+            center={[0, 0]}
+            // absolute
+            hasLegend={true}
+          />
+        </View>
       </View>
     </View>
   );
@@ -73,22 +66,24 @@ export default function NetWorthPieChart({ assets }: NetWorthPieChartProps) {
 const styles = StyleSheet.create({
   container: {
     marginVertical: 16,
-    backgroundColor: COLORS.surface,
     borderRadius: 24,
-    padding: 16,
+    // padding: 16,
     borderWidth: 1,
     borderColor: COLORS.surfaceLight,
+  },
+  contentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'center'
   },
   chartWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   legendContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flex: 1,
     justifyContent: 'center',
-    marginTop: 16,
-    gap: 12,
+    gap: 8,
   },
   legendItem: {
     flexDirection: 'row',
@@ -99,9 +94,10 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    marginRight: 6,
+    marginRight: 8,
   },
   legendText: {
     ...TYPOGRAPHY.smallMedium,
+    flex: 1,
   },
 });

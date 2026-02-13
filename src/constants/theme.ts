@@ -1,3 +1,30 @@
+// Asset Colors
+const ASSET_COLORS = {
+  stock: '#86EFAC', // Light Green
+  crypto: '#FACC15', // Yellow
+  real_estate: '#9CA3AF', // Grey
+  gold: '#D4A017', // Gold
+  silver: '#E5E7EB', // Slate
+  bonds: '#8B5CF6', // Violet
+  money_market: '#93C5FD', // Light Blue
+  options: '#F9A8D4', // Pink
+  pension_fund: '#C4B5FD', // Light Purple
+  equity_funds: '#EF4444', // Red
+};
+
+const ASSET_ICON_COLORS = {
+  stock: '#15803D',      // Green 700 - Darker
+  crypto: '#A16207',     // Yellow 700 - Darker
+  real_estate: '#374151', // Gray 700 - Darker
+  gold: '#78350F',       // Amber 900 - Darker
+  silver: '#334155',     // Slate 700 - Darker
+  bonds: '#6D28D9',      // Violet 700 - Darker
+  money_market: '#1D4ED8', // Blue 700 - Darker
+  options: '#BE185D',    // Pink 700 - Darker
+  pension_fund: '#5B21B6', // Violet 900 - Darker
+  equity_funds: '#B91C1C', // Red 700 - Darker
+};
+
 export const DARK_COLORS = {
   // Primary Palette - Vibrant
   primary: '#FDE047',
@@ -32,6 +59,10 @@ export const DARK_COLORS = {
   bodyGradient: ['#FDE68A', '#FBBF24'] as const,
   mindGradient: ['#5FE3D4', '#2DD4BF'] as const,
   wealthGradient: ['#FBBF24', '#F59E0B'] as const,
+
+  // Asset Colors
+  asset: ASSET_COLORS,
+  assetIcon: ASSET_ICON_COLORS,
 };
 
 export const LIGHT_COLORS = {
@@ -68,6 +99,10 @@ export const LIGHT_COLORS = {
   bodyGradient: ['#FEF08A', '#FDE68A'] as const,
   mindGradient: ['#CCFBF1', '#99F6E4'] as const,
   wealthGradient: ['#FEF3C7', '#FDE68A'] as const,
+
+  // Asset Colors
+  asset: ASSET_COLORS,
+  assetIcon: ASSET_ICON_COLORS,
 };
 
 export type ThemeColors = {
@@ -93,6 +128,8 @@ export type ThemeColors = {
   bodyGradient: readonly [string, string, ...string[]];
   mindGradient: readonly [string, string, ...string[]];
   wealthGradient: readonly [string, string, ...string[]];
+  asset: Record<string, string>;
+  assetIcon: Record<string, string>;
 };
 
 export const COLORS = DARK_COLORS as ThemeColors;
@@ -207,15 +244,4 @@ export const BORDER_RADIUS = {
   full: 9999,
 };
 
-export const CATEGORY_COLORS: Record<string, string> = {
-  stock: '#86EFAC', // Light Green
-  crypto: '#FACC15', // Yellow
-  real_estate: '#9CA3AF', // Grey
-  gold: '#D4A017', // Gold
-  silver: '#E5E7EB', // Slate
-  bonds: '#8B5CF6', // Violet
-  money_market: '#93C5FD', // Light Blue
-  options: '#F9A8D4', // Pink
-  pension_fund: '#C4B5FD', // Light Purple
-  equity_funds: '#EF4444', // Red
-};
+
