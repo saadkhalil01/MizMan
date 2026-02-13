@@ -20,7 +20,9 @@ export const ASSET_CATEGORIES = [
   { id: 'silver', label: 'Silver', icon: 'diamond-stone', provider: 'MaterialCommunityIcons' },
   { id: 'bonds', label: 'Bonds', icon: 'file-document-outline', provider: 'MaterialCommunityIcons' },
   { id: 'money_market', label: 'Money Market Funds', icon: 'bank', provider: 'MaterialCommunityIcons' },
-  { id: 'options', label: 'Options', icon: 'chart-bell-curve-cumulative', provider: 'MaterialCommunityIcons' },
+  { id: 'options', label: 'FnO Futures & Options', icon: 'chart-bell-curve-cumulative', provider: 'MaterialCommunityIcons' },
+  { id: 'pension_fund', label: 'Pension Fund', icon: 'piggy-bank-outline', provider: 'MaterialCommunityIcons' },
+  { id: 'equity_funds', label: 'Equity Funds', icon: 'chart-line', provider: 'MaterialCommunityIcons' },
 ] as const;
 
 export interface Asset {

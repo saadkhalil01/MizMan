@@ -349,8 +349,8 @@ const styles = StyleSheet.create({
     },
     ringScore: {
         color: COLORS.text,
-        fontFamily: 'PressStart2P',
-        fontWeight: '400',
+        fontFamily: 'Inter-SemiBold',
+        fontWeight: '600',
     },
     ringLabel: {
         ...TYPOGRAPHY.caption,

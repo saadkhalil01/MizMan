@@ -50,19 +50,19 @@ export const TYPOGRAPHY = {
     fontSize: 20,
     fontWeight: '400' as const,
     lineHeight: 32,
-    fontFamily: 'PressStart2P',
+    fontFamily: 'Inter-SemiBold',
   },
   h2: {
     fontSize: 16,
     fontWeight: '400' as const,
     lineHeight: 26,
-    fontFamily: 'PressStart2P',
+    fontFamily: 'Inter-SemiBold',
   },
   h3: {
     fontSize: 12,
     fontWeight: '400' as const,
     lineHeight: 20,
-    fontFamily: 'PressStart2P',
+    fontFamily: 'Inter-SemiBold',
   },
   body: {
     fontSize: 16,

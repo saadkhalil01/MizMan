@@ -13,7 +13,6 @@ export default function App() {
   useEffect(() => {
     async function loadFonts() {
       await Font.loadAsync({
-        'PressStart2P': require('./assets/fonts/PressStart2P-Regular.ttf'),
         'Inter-Regular': require('./assets/fonts/Inter-Regular.ttf'),
         'Inter-Medium': require('./assets/fonts/Inter-Medium.ttf'),
         'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf'),
