@@ -10,7 +10,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS, CATEGORY_COLORS } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 
 export const ASSET_CATEGORIES = [
@@ -99,29 +99,37 @@ export default function AssetModal({
           <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
             <Text style={[styles.label, { color: colors.textSecondary }]}>Category</Text>
             <View style={styles.categoryGrid}>
-              {ASSET_CATEGORIES.map((cat) => (
-                <TouchableOpacity
-                  key={cat.id}
-                  style={[
-                    styles.categoryItem,
-                    { backgroundColor: colors.surfaceLight },
-                    selectedTypeId === cat.id && { backgroundColor: colors.wealth, borderColor: colors.wealth },
-                  ]}
-                  onPress={() => setSelectedTypeId(cat.id)}
-                >
-                  {renderIcon(cat, 24, selectedTypeId === cat.id ? colors.background : colors.wealth)}
-                  <Text
+              {ASSET_CATEGORIES.map((cat) => {
+                const catColor = CATEGORY_COLORS[cat.id] || colors.wealth;
+                const isSelected = selectedTypeId === cat.id;
+                
+                return (
+                  <TouchableOpacity
+                    key={cat.id}
                     style={[
-                      styles.categoryLabel,
-                      { color: colors.textSecondary },
-                      selectedTypeId === cat.id && { color: colors.background, fontWeight: '600' },
+                      styles.categoryItem,
+                      { backgroundColor: colors.surfaceLight },
+                      isSelected && { 
+                        backgroundColor: isDark ? `${catColor}20` : `${catColor}15`, 
+                        borderColor: catColor 
+                      },
                     ]}
-                    numberOfLines={1}
+                    onPress={() => setSelectedTypeId(cat.id)}
                   >
-                    {cat.label}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+                    {renderIcon(cat, 24, isSelected ? catColor : colors.wealth)}
+                    <Text
+                      style={[
+                        styles.categoryLabel,
+                        { color: colors.textSecondary },
+                        isSelected && { color: catColor, fontWeight: '600' },
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {cat.label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             <Text style={[styles.label, { color: colors.textSecondary }]}>Amount</Text>

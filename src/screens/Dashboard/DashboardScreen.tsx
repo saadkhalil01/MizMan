@@ -121,7 +121,7 @@ export default function DashboardScreen() {
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
-                <View style={[styles.header, { paddingTop: insets.top + SPACING.md }]}>
+                <View style={[styles.header, { paddingTop: insets.top + SPACING.xs }]}>
                     <View>
                         <Text style={[styles.greeting, { color: colors.text }]}>Assalamu Alaikum</Text>
                         <Text style={[styles.date, { color: colors.textSecondary }]}>
