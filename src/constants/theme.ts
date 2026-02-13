@@ -206,3 +206,16 @@ export const BORDER_RADIUS = {
   xl: 24,
   full: 9999,
 };
+
+export const CATEGORY_COLORS: Record<string, string> = {
+  stock: '#86EFAC', // Light Green
+  crypto: '#FACC15', // Yellow
+  real_estate: '#9CA3AF', // Grey
+  gold: '#D4A017', // Gold
+  silver: '#E5E7EB', // Slate
+  bonds: '#8B5CF6', // Violet
+  money_market: '#93C5FD', // Light Blue
+  options: '#F9A8D4', // Pink
+  pension_fund: '#C4B5FD', // Light Purple
+  equity_funds: '#EF4444', // Red
+};

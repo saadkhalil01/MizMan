@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { SPACING, TYPOGRAPHY, BORDER_RADIUS } from '../../constants/theme';
+import { SPACING, TYPOGRAPHY, BORDER_RADIUS, CATEGORY_COLORS } from '../../constants/theme';
 import { useTheme } from '../../context/ThemeContext';
 
 import ScreenBackground from '../../components/common/ScreenBackground';
@@ -177,20 +177,42 @@ export default function WealthScreen() {
               <Text style={[styles.sectionTitle, { color: colors.text }]}>Your Assets</Text>
               {assets.map((asset) => {
                 const category = ASSET_CATEGORIES.find((c) => c.id === asset.typeId);
+                
+                const renderIcon = () => {
+                  if (!category) return null;
+                  
+                  const iconName = (category as any).icon;
+                  const provider = (category as any).provider;
+
+                  if (provider === 'MaterialCommunityIcons') {
+                    return <MaterialCommunityIcons name={iconName} size={20} color={colors.wealth} />;
+                  }
+                  if (provider === 'MaterialIcons') {
+                    return <MaterialIcons name={iconName} size={20} color={colors.wealth} />;
+                  }
+                  return <Ionicons name={iconName} size={20} color={colors.wealth} />;
+                };
+
+                const cardBgColor = category ? (CATEGORY_COLORS[category.id] || colors.wealth) : colors.wealth;
+                
                 return (
                   <TouchableOpacity
                     key={asset.id}
-                    style={[styles.assetItem, { backgroundColor: colors.surface, borderColor: colors.surfaceLight }]}
+                    style={[
+                      styles.assetItem, 
+                      { 
+                        backgroundColor: isDark ? `${cardBgColor}15` : `${cardBgColor}10`,
+                        borderColor: isDark ? `${cardBgColor}30` : `${cardBgColor}20` 
+                      }
+                    ]}
                     onPress={() => {
                       setEditingAsset(asset);
                       setIsModalVisible(true);
                     }}
                   >
                     <View style={styles.assetInfo}>
-                      <View style={[styles.assetIconContainer, { backgroundColor: colors.surfaceLight }]}>
-                         <Text style={{ color: colors.wealth, ...TYPOGRAPHY.bodySemiBold, fontSize: 14 }}>
-                           {selectedCurrency.symbol}
-                         </Text>
+                      <View style={[styles.assetIconContainer, { backgroundColor: isDark ? `${cardBgColor}30` : `${cardBgColor}20` }]}>
+                        {renderIcon()}
                       </View>
                       <Text style={[styles.assetLabel, { color: colors.text }]}>{category?.label}</Text>
                     </View>
