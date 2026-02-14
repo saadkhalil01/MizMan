@@ -23,7 +23,7 @@ export default function NetWorthPieChart({ assets }: NetWorthPieChartProps) {
     return {
       name: cat.label,
       value: total,
-      color: colors.asset[cat.id] || colors.spirit,
+      color: colors.assetIcon[cat.id] || colors.spirit,
       legendFontColor: colors.textSecondary,
       legendFontSize: 12,
     };

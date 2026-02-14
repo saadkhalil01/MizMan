@@ -1,10 +1,10 @@
 // Asset Colors
 const ASSET_COLORS = {
   stock: '#86EFAC', // Light Green
-  crypto: '#FACC15', // Yellow
+  crypto: '#DBFF00', // Neon/Lime Yellow
   real_estate: '#9CA3AF', // Grey
-  gold: '#D4A017', // Gold
-  silver: '#E5E7EB', // Slate
+  gold: '#FFD700', // Strict Gold
+  silver: '#D1D5DB', // Light Grey
   bonds: '#8B5CF6', // Violet
   money_market: '#93C5FD', // Light Blue
   options: '#F9A8D4', // Pink
@@ -14,10 +14,10 @@ const ASSET_COLORS = {
 
 const ASSET_ICON_COLORS = {
   stock: '#15803D',      // Green 700 - Darker
-  crypto: '#A16207',     // Yellow 700 - Darker
+  crypto: 'orange',     // Neon Yellow - Darker
   real_estate: '#374151', // Gray 700 - Darker
-  gold: '#78350F',       // Amber 900 - Darker
-  silver: '#334155',     // Slate 700 - Darker
+  gold: 'gold',       // Darker Gold
+  silver: '#64748B',     // Slate 500 - Darker
   bonds: '#6D28D9',      // Violet 700 - Darker
   money_market: '#1D4ED8', // Blue 700 - Darker
   options: '#BE185D',    // Pink 700 - Darker

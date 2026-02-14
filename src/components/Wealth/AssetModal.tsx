@@ -75,7 +75,11 @@ export default function AssetModal({
 
   const renderIcon = (category: typeof ASSET_CATEGORIES[number], size = 20, color = colors.text) => {
     if (category.provider === 'MaterialCommunityIcons') {
-      return <MaterialCommunityIcons name={category.icon as any} size={size} color={color} />;
+      return <MaterialCommunityIcons
+        name={category.icon as any}
+        size={size}
+        color={color}
+      />;
     }
     return <Ionicons name={category.icon as any} size={size} color={color} />;
   };
@@ -100,28 +104,30 @@ export default function AssetModal({
             <Text style={[styles.label, { color: colors.textSecondary }]}>Category</Text>
             <View style={styles.categoryGrid}>
               {ASSET_CATEGORIES.map((cat) => {
-                const catColor = colors.asset[cat.id] || colors.wealth;
                 const isSelected = selectedTypeId === cat.id;
-                
+
                 return (
                   <TouchableOpacity
                     key={cat.id}
-                    style={[
-                      styles.categoryItem,
-                      { backgroundColor: colors.surfaceLight },
-                      isSelected && { 
-                        backgroundColor: isDark ? `${catColor}20` : `${catColor}15`, 
-                        borderColor: catColor 
-                      },
-                    ]}
+                    style={styles.categoryItem}
                     onPress={() => setSelectedTypeId(cat.id)}
                   >
-                    {renderIcon(cat, 24, isSelected ? (colors.assetIcon[cat.id] || catColor) : colors.wealth)}
+                    <View
+                      style={[
+                        styles.categoryBall,
+                        { backgroundColor: colors.surfaceLight },
+                        isSelected && {
+                          backgroundColor: colors.surface,
+                          borderColor: colors.assetIcon[cat.id] || colors.wealth,
+                          borderWidth: 2,
+                        },
+                      ]}
+                    >
+                      {renderIcon(cat, 24, colors.assetIcon[cat.id])}
+                    </View>
                     <Text
                       style={[
-                        styles.categoryLabel,
-                        { color: colors.textSecondary },
-                        isSelected && { color: catColor, fontWeight: '600' },
+                        styles.categoryLabel, { color: colors.assetIcon[cat.id], fontWeight: '600' },
                       ]}
                       numberOfLines={1}
                     >
@@ -150,7 +156,7 @@ export default function AssetModal({
           <View style={styles.footer}>
             {editingAsset && onDelete && (
               <TouchableOpacity
-                style={styles.deleteButton}
+                style={[styles.deleteButton, { backgroundColor: colors.surfaceLight }]}
                 onPress={() => {
                   onDelete(editingAsset.id);
                   onClose();
@@ -201,20 +207,27 @@ const styles = StyleSheet.create({
   categoryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: SPACING.sm,
+    gap: SPACING.md,
+    justifyContent: 'flex-start',
   },
   categoryItem: {
-    width: '48%',
-    padding: SPACING.md,
-    borderRadius: BORDER_RADIUS.md,
+    width: '21%',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'transparent',
+    marginBottom: SPACING.md,
+  },
+  categoryBall: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: SPACING.xs,
   },
   categoryLabel: {
-    ...TYPOGRAPHY.small,
-    marginTop: SPACING.xs,
+    // ...TYPOGRAPHY.small,
+    fontSize: 10,
     textAlign: 'center',
+    fontWeight: 'bold'
   },
   inputContainer: {
     flexDirection: 'row',
@@ -241,7 +254,8 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: BORDER_RADIUS.md,
-    backgroundColor: 'rgba(248, 113, 113, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(248, 113, 113, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
   },
